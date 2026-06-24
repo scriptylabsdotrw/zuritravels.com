@@ -4,94 +4,42 @@ import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import type { HeaderContent } from '@/lib/types';
 
-type SubItem = { label: string; href: string };
+type SiteHeaderProps = {
+  header: HeaderContent;
+  contact: { phone: string; email: string; address: string };
+};
 
-type NavItem =
-  | { kind: 'link'; label: string; href: string }
-  | { kind: 'mega'; label: string };
-
-const nav: NavItem[] = [
-  { kind: 'link', label: 'About', href: '/about' },
-  { kind: 'mega', label: 'Tours' },
-  { kind: 'link', label: 'Destinations', href: '/destinations' },
-  { kind: 'link', label: 'Visit Rwanda', href: '/visit-rwanda' },
-  { kind: 'link', label: 'Journal', href: '/journal' },
-  { kind: 'link', label: 'Contact', href: '/contact' },
-];
-
-const toursFeatured: {
-  title: string;
-  eyebrow?: string;
-  href: string;
-  blurb: string;
-}[] = [
-  {
-    eyebrow: 'Our Speciality',
-    title: 'Rwanda',
-    href: '/destinations/rwanda',
-    blurb:
-      'The heartbeat of every Zuri Travels journey — gorillas, glassy lakes, mist-laced hills and the country we call home.',
-  },
-  {
-    title: 'EAC Destinations',
-    href: '/destinations',
-    blurb:
-      'Cross-border adventures across the East African Community — Uganda, Kenya, Tanzania, Burundi & the DRC.',
-  },
-];
-
-const toursLists: { title: string; items: SubItem[] }[] = [
-  {
-    title: 'Special Interest',
-    items: [
-      { label: 'Philanthropy', href: '/tours/philanthropy' },
-      { label: 'Arts & Design', href: '/tours/arts-design' },
-      { label: 'Honeymoon', href: '/tours/honeymoon' },
-      { label: 'History', href: '/tours/history' },
-      { label: 'Active', href: '/tours/active' },
-      { label: 'Volunteering', href: '/tours/volunteering' },
-      { label: 'LGBTQ+', href: '/tours/lgbtq' },
-    ],
-  },
-  {
-    title: 'Groups',
-    items: [
-      { label: 'Church & Mission', href: '/tours/church-mission' },
-      { label: 'Schools', href: '/tours/schools' },
-      { label: 'Leadership', href: '/tours/leadership' },
-      { label: 'Immersion Programs', href: '/tours/immersion' },
-      { label: 'Corporate', href: '/tours/corporate' },
-    ],
-  },
-];
-
-export default function SiteHeader() {
+export default function SiteHeader({ header, contact }: SiteHeaderProps) {
+  const { nav, megaFeatured: toursFeatured, megaLists: toursLists } = header;
   const [open, setOpen] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
   const [mobileToursOpen, setMobileToursOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Close on route change
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 36);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   useEffect(() => {
     setOpen(false);
     setMegaOpen(false);
     setMobileToursOpen(false);
   }, [pathname]);
 
-  // Lock body scroll while mobile menu is open
   useEffect(() => {
-    if (open) {
-      const original = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = original;
-      };
-    }
+    if (!open) return;
+    const orig = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = orig; };
   }, [open]);
 
-  // Close on Escape
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== 'Escape') return;
@@ -103,13 +51,9 @@ export default function SiteHeader() {
   }, []);
 
   const openMega = () => {
-    if (closeTimer.current) {
-      clearTimeout(closeTimer.current);
-      closeTimer.current = null;
-    }
+    if (closeTimer.current) { clearTimeout(closeTimer.current); closeTimer.current = null; }
     setMegaOpen(true);
   };
-
   const scheduleCloseMega = () => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
     closeTimer.current = setTimeout(() => setMegaOpen(false), 140);
@@ -117,13 +61,17 @@ export default function SiteHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 border-b border-slate-200/60 bg-white/85 backdrop-blur-xl">
+      {/* ─── HEADER BAR ─── */}
+      <header
+        className={`sticky top-0 z-50 transition-all duration-300 ${
+          scrolled
+            ? 'border-b border-neutral-200/70 bg-white/95 shadow-[0_1px_0_rgba(0,0,0,0.05),0_6px_28px_rgba(0,0,0,0.06)] backdrop-blur-xl'
+            : 'border-b border-neutral-100/50 bg-white/85 backdrop-blur-md'
+        }`}
+      >
         <div className="mx-auto flex max-w-[1280px] items-center justify-between px-5 py-3 lg:px-10 lg:py-4">
-          <Link
-            href="/"
-            className="flex items-center"
-            aria-label="Zuri Travels — home"
-          >
+          {/* Logo */}
+          <Link href="/" className="flex items-center" aria-label="Zuri Travels — home">
             <Image
               src="/logos/primary_logo_safari_olive_transparent.png"
               alt="Zuri Travels"
@@ -134,12 +82,10 @@ export default function SiteHeader() {
             />
           </Link>
 
-          <nav
-            aria-label="Primary"
-            className="hidden items-center gap-6 text-[0.7rem] font-medium uppercase tracking-[0.26em] text-slate-600 xl:flex 2xl:gap-8 2xl:tracking-[0.32em]"
-          >
+          {/* Desktop nav */}
+          <nav aria-label="Primary" className="hidden items-center gap-7 xl:flex 2xl:gap-9">
             {nav.map((item) =>
-              item.kind === 'mega' ? (
+              item.isMega ? (
                 <div
                   key={item.label}
                   className="relative"
@@ -152,75 +98,89 @@ export default function SiteHeader() {
                     aria-controls="tours-mega"
                     onFocus={openMega}
                     onClick={() => setMegaOpen((v) => !v)}
-                    className={`inline-flex items-center gap-1.5 text-inherit uppercase tracking-[inherit] transition hover:text-slate-950 ${
-                      megaOpen ? 'text-slate-950' : ''
+                    className={`group relative inline-flex items-center gap-1.5 text-[0.7rem] font-medium uppercase tracking-[0.28em] transition-colors ${
+                      megaOpen ? 'text-neutral-950' : 'text-neutral-500 hover:text-neutral-950'
                     }`}
                   >
                     {item.label}
                     <span
                       aria-hidden="true"
-                      className={`text-[0.5rem] transition ${
-                        megaOpen ? 'rotate-180' : ''
+                      className={`text-[0.48rem] transition-transform duration-200 ${
+                        megaOpen ? 'rotate-180 text-[#7C8A3F]' : 'text-neutral-400'
                       }`}
                     >
                       ▾
                     </span>
+                    <span
+                      className={`absolute -bottom-1.5 left-0 h-px bg-[#7C8A3F] transition-all duration-300 ${
+                        megaOpen ? 'w-full' : 'w-0'
+                      }`}
+                    />
                   </button>
                 </div>
               ) : (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="transition hover:text-slate-950"
+                  className={`group relative text-[0.7rem] font-medium uppercase tracking-[0.28em] transition-colors ${
+                    pathname === item.href
+                      ? 'text-neutral-950'
+                      : 'text-neutral-500 hover:text-neutral-950'
+                  }`}
                 >
                   {item.label}
+                  <span
+                    className={`absolute -bottom-1.5 left-0 h-px bg-[#7C8A3F] transition-all duration-300 ${
+                      pathname === item.href ? 'w-full' : 'w-0 group-hover:w-full'
+                    }`}
+                  />
                 </Link>
               ),
             )}
           </nav>
 
+          {/* CTA + hamburger */}
           <div className="flex items-center gap-3">
             <Link
-              href="/contact"
-              className="hidden items-center gap-2 rounded-full bg-[#7C8A3F] px-5 py-2.5 text-[0.72rem] font-semibold uppercase tracking-[0.28em] text-white shadow-glow transition hover:bg-[#97a65a] sm:inline-flex"
+              href={header.ctaHref}
+              className="hidden items-center gap-2 rounded-full bg-[#7C8A3F] px-5 py-2.5 text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-white shadow-[0_2px_16px_rgba(124,138,63,0.38)] transition hover:bg-[#97a65a] hover:shadow-[0_4px_24px_rgba(124,138,63,0.48)] sm:inline-flex"
             >
-              Inquire Now
+              {header.ctaLabel}
               <span aria-hidden="true">→</span>
             </Link>
             <Link
-              href="/contact"
-              className="inline-flex items-center gap-1 rounded-full bg-[#7C8A3F] px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.28em] text-white shadow-glow transition hover:bg-[#97a65a] sm:hidden"
-              aria-label="Inquire now"
+              href={header.ctaHref}
+              className="inline-flex items-center gap-1 rounded-full bg-[#7C8A3F] px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.24em] text-white shadow-[0_2px_12px_rgba(124,138,63,0.35)] transition hover:bg-[#97a65a] sm:hidden"
+              aria-label={header.ctaLabel}
             >
-              Inquire
+              {header.ctaLabelShort}
               <span aria-hidden="true">→</span>
             </Link>
 
-            {/* Hamburger — visible until lg */}
             <button
               type="button"
               onClick={() => setOpen((v) => !v)}
               aria-label={open ? 'Close menu' : 'Open menu'}
               aria-expanded={open}
               aria-controls="mobile-menu"
-              className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-950 transition hover:border-neutral-400 xl:hidden"
+              className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-950 transition hover:border-neutral-400 hover:shadow-sm xl:hidden"
             >
               <span className="sr-only">Toggle menu</span>
               <span
                 aria-hidden="true"
-                className={`absolute h-px w-5 bg-current transition duration-300 ease-out ${
+                className={`absolute h-px w-[18px] bg-current transition duration-300 ease-out ${
                   open ? 'translate-y-0 rotate-45' : '-translate-y-[5px]'
                 }`}
               />
               <span
                 aria-hidden="true"
-                className={`absolute h-px w-5 bg-current transition duration-200 ${
+                className={`absolute h-px w-[18px] bg-current transition duration-200 ${
                   open ? 'scale-x-0 opacity-0' : 'scale-x-100 opacity-100'
                 }`}
               />
               <span
                 aria-hidden="true"
-                className={`absolute h-px w-5 bg-current transition duration-300 ease-out ${
+                className={`absolute h-px w-[18px] bg-current transition duration-300 ease-out ${
                   open ? 'translate-y-0 -rotate-45' : 'translate-y-[5px]'
                 }`}
               />
@@ -228,7 +188,7 @@ export default function SiteHeader() {
           </div>
         </div>
 
-        {/* ─────────── DESKTOP MEGA MENU (Tours) ─────────── */}
+        {/* ─── DESKTOP MEGA MENU ─── */}
         <div
           id="tours-mega"
           role="region"
@@ -236,65 +196,65 @@ export default function SiteHeader() {
           aria-hidden={!megaOpen}
           onMouseEnter={openMega}
           onMouseLeave={scheduleCloseMega}
-          className={`absolute inset-x-0 top-full hidden border-b border-slate-200 bg-white shadow-[0_24px_60px_rgba(0,0,0,0.12)] transition duration-200 xl:block ${
+          className={`absolute inset-x-0 top-full hidden border-b border-neutral-200/80 bg-white shadow-[0_32px_72px_rgba(0,0,0,0.1)] transition-all duration-200 xl:block ${
             megaOpen
               ? 'pointer-events-auto translate-y-0 opacity-100'
-              : 'pointer-events-none -translate-y-2 opacity-0'
+              : 'pointer-events-none -translate-y-3 opacity-0'
           }`}
         >
-          <div className="mx-auto grid max-w-[1280px] grid-cols-4 gap-10 px-10 py-10">
-            {/* Featured columns 1 & 2 */}
+          <div className="mx-auto grid max-w-[1280px] grid-cols-4 gap-8 px-10 py-10">
+            {/* Featured columns — with gorilla / culture image thumbnails */}
             {toursFeatured.map((col) => (
               <Link
                 key={col.title}
                 href={col.href}
                 onClick={() => setMegaOpen(false)}
-                className="group flex flex-col gap-4 rounded-2xl border border-transparent p-5 transition hover:border-slate-200 hover:bg-slate-50"
+                className="group flex flex-col overflow-hidden rounded-xl border border-neutral-100 bg-neutral-50 transition hover:border-neutral-200 hover:shadow-[0_8px_32px_rgba(0,0,0,0.08)]"
               >
-                {col.eyebrow && (
-                  <span className="text-[0.6rem] font-semibold uppercase tracking-[0.32em] text-[#7C8A3F]">
-                    {col.eyebrow}
+                <div className="relative h-40 overflow-hidden rounded-t-xl">
+                  <Image
+                    src={col.image}
+                    alt={col.title}
+                    fill
+                    sizes="280px"
+                    className="object-cover transition duration-700 group-hover:scale-[1.06]"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                  {col.eyebrow && (
+                    <span className="absolute left-4 top-4 rounded-full bg-black/45 px-3 py-1 text-[0.52rem] font-semibold uppercase tracking-[0.32em] text-[#b5c46b] backdrop-blur-sm">
+                      {col.eyebrow}
+                    </span>
+                  )}
+                  <span className="absolute bottom-3 left-4 text-xl font-light tracking-tight text-white">
+                    {col.title}
                   </span>
-                )}
-                <span className="text-2xl font-light tracking-tight text-slate-950">
-                  {col.title}
-                </span>
-                <span className="text-sm leading-relaxed text-slate-600">
-                  {col.blurb}
-                </span>
-                <span className="mt-auto inline-flex items-center gap-2 text-[0.62rem] font-semibold uppercase tracking-[0.32em] text-slate-500 transition group-hover:text-[#7C8A3F]">
-                  Explore
-                  <span
-                    aria-hidden="true"
-                    className="transition group-hover:translate-x-1"
-                  >
-                    →
+                </div>
+                <div className="flex flex-1 flex-col gap-3 p-5">
+                  <span className="text-sm leading-relaxed text-neutral-600">{col.blurb}</span>
+                  <span className="mt-auto inline-flex items-center gap-2 text-[0.6rem] font-semibold uppercase tracking-[0.32em] text-neutral-400 transition group-hover:text-[#7C8A3F]">
+                    Explore
+                    <span aria-hidden="true" className="transition group-hover:translate-x-1">→</span>
                   </span>
-                </span>
+                </div>
               </Link>
             ))}
 
-            {/* List columns 3 & 4 */}
+            {/* List columns */}
             {toursLists.map((col) => (
-              <div key={col.title} className="flex flex-col gap-4 p-5">
-                <span className="text-[0.62rem] font-semibold uppercase tracking-[0.32em] text-slate-400">
+              <div key={col.title} className="flex flex-col gap-5 p-5">
+                <span className="border-b border-neutral-100 pb-3 text-[0.58rem] font-semibold uppercase tracking-[0.38em] text-neutral-400">
                   {col.title}
                 </span>
-                <ul className="flex flex-col gap-2.5">
+                <ul className="flex flex-col gap-3">
                   {col.items.map((it) => (
                     <li key={it.label}>
                       <Link
                         href={it.href}
                         onClick={() => setMegaOpen(false)}
-                        className="group inline-flex items-center gap-2 text-[0.95rem] font-light tracking-tight text-slate-800 transition hover:text-[#7C8A3F]"
+                        className="group inline-flex items-center gap-3 text-[0.88rem] font-light tracking-tight text-neutral-700 transition hover:text-[#7C8A3F]"
                       >
+                        <span className="h-px w-3 flex-none bg-neutral-300 transition-all duration-200 group-hover:w-5 group-hover:bg-[#7C8A3F]" />
                         {it.label}
-                        <span
-                          aria-hidden="true"
-                          className="text-[0.7rem] opacity-0 transition group-hover:translate-x-0.5 group-hover:opacity-100"
-                        >
-                          →
-                        </span>
                       </Link>
                     </li>
                   ))}
@@ -305,7 +265,7 @@ export default function SiteHeader() {
         </div>
       </header>
 
-      {/* ─────────── MOBILE MENU OVERLAY ─────────── */}
+      {/* ─── MOBILE MENU ─── */}
       <div
         id="mobile-menu"
         role="dialog"
@@ -316,36 +276,34 @@ export default function SiteHeader() {
         {/* Backdrop */}
         <div
           onClick={() => setOpen(false)}
-          className={`absolute inset-0 bg-black/30 backdrop-blur-sm transition-opacity duration-300 ${
+          className={`absolute inset-0 bg-black/45 backdrop-blur-sm transition-opacity duration-300 ${
             open ? 'opacity-100' : 'opacity-0'
           }`}
         />
 
-        {/* Panel — slides down from under the header */}
+        {/* Panel */}
         <div
-          className={`absolute inset-x-0 top-0 max-h-screen origin-top overflow-y-auto bg-white pt-[88px] shadow-[0_24px_60px_rgba(0,0,0,0.15)] transition duration-500 ease-out ${
-            open ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'
+          className={`absolute inset-x-0 top-0 max-h-[100svh] origin-top overflow-y-auto bg-white shadow-[0_32px_80px_rgba(0,0,0,0.2)] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            open ? 'translate-y-0 opacity-100' : '-translate-y-6 opacity-0'
           }`}
+          style={{ paddingTop: 72 }}
         >
-          <nav
-            aria-label="Mobile primary"
-            className="mx-auto max-w-[1280px] px-6 pb-10 pt-6"
-          >
+          <nav aria-label="Mobile primary" className="mx-auto max-w-[1280px] px-6 pb-12 pt-6">
             <ul className="flex flex-col">
               {nav.map((item, i) => {
                 const index = String(i + 1).padStart(2, '0');
 
-                if (item.kind === 'mega') {
+                if (item.isMega) {
                   return (
                     <li key={item.label}>
                       <button
                         type="button"
                         onClick={() => setMobileToursOpen((v) => !v)}
                         aria-expanded={mobileToursOpen}
-                        className="group flex w-full items-center justify-between border-b border-neutral-200 py-5 text-left"
+                        className="group flex w-full items-center justify-between border-b border-neutral-100 py-5 text-left"
                       >
                         <span className="flex items-center gap-5">
-                          <span className="text-[0.62rem] font-semibold uppercase tracking-[0.4em] text-neutral-400">
+                          <span className="w-8 text-[0.6rem] font-semibold uppercase tracking-[0.4em] text-neutral-400">
                             {index}
                           </span>
                           <span className="text-2xl font-light tracking-tight text-neutral-950 transition group-hover:text-[#7C8A3F]">
@@ -354,47 +312,57 @@ export default function SiteHeader() {
                         </span>
                         <span
                           aria-hidden="true"
-                          className={`text-[0.7rem] uppercase tracking-[0.3em] text-neutral-400 transition ${
-                            mobileToursOpen
-                              ? 'rotate-180 text-[#7C8A3F]'
-                              : ''
+                          className={`text-[0.62rem] text-neutral-400 transition-transform duration-200 ${
+                            mobileToursOpen ? 'rotate-180 text-[#7C8A3F]' : ''
                           }`}
                         >
                           ▾
                         </span>
                       </button>
 
-                      {/* Mobile Tours sub-panel */}
+                      {/* Sub-panel */}
                       <div
                         className={`grid overflow-hidden transition-[grid-template-rows] duration-300 ease-out ${
-                          mobileToursOpen
-                            ? 'grid-rows-[1fr]'
-                            : 'grid-rows-[0fr]'
+                          mobileToursOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
                         }`}
                       >
                         <div className="min-h-0 overflow-hidden">
-                          <div className="space-y-6 border-b border-neutral-200 py-6 pl-12">
+                          {/* Image cards */}
+                          <div className="grid grid-cols-2 gap-3 border-b border-neutral-100 py-5 pl-[52px]">
                             {toursFeatured.map((col) => (
                               <Link
                                 key={col.title}
                                 href={col.href}
                                 onClick={() => setOpen(false)}
-                                className="block"
+                                className="group relative overflow-hidden rounded-lg"
                               >
-                                {col.eyebrow && (
-                                  <span className="block text-[0.55rem] font-semibold uppercase tracking-[0.32em] text-[#7C8A3F]">
-                                    {col.eyebrow}
-                                  </span>
-                                )}
-                                <span className="text-lg font-light tracking-tight text-neutral-950">
-                                  {col.title}
-                                </span>
+                                <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
+                                  <Image
+                                    src={col.image}
+                                    alt={col.title}
+                                    fill
+                                    sizes="50vw"
+                                    className="object-cover transition duration-500 group-hover:scale-105"
+                                  />
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                                  <div className="absolute bottom-3 left-3">
+                                    {col.eyebrow && (
+                                      <span className="block text-[0.5rem] uppercase tracking-[0.3em] text-[#7C8A3F]">
+                                        {col.eyebrow}
+                                      </span>
+                                    )}
+                                    <span className="text-sm font-light text-white">{col.title}</span>
+                                  </div>
+                                </div>
                               </Link>
                             ))}
+                          </div>
 
+                          {/* List items */}
+                          <div className="grid grid-cols-2 gap-6 border-b border-neutral-100 py-5 pl-[52px]">
                             {toursLists.map((col) => (
                               <div key={col.title}>
-                                <span className="mb-2 block text-[0.55rem] font-semibold uppercase tracking-[0.32em] text-neutral-400">
+                                <span className="mb-3 block text-[0.55rem] font-semibold uppercase tracking-[0.32em] text-neutral-400">
                                   {col.title}
                                 </span>
                                 <ul className="flex flex-col gap-2">
@@ -403,7 +371,7 @@ export default function SiteHeader() {
                                       <Link
                                         href={it.href}
                                         onClick={() => setOpen(false)}
-                                        className="text-base font-light tracking-tight text-neutral-700 transition hover:text-[#7C8A3F]"
+                                        className="text-sm font-light text-neutral-700 transition hover:text-[#7C8A3F]"
                                       >
                                         {it.label}
                                       </Link>
@@ -419,24 +387,35 @@ export default function SiteHeader() {
                   );
                 }
 
+                const href = item.href;
+                const isActive = pathname === href;
                 return (
-                  <li key={item.href}>
+                  <li key={href}>
                     <Link
-                      href={item.href}
-                      className="group flex items-center justify-between border-b border-neutral-200 py-5 transition"
+                      href={href}
+                      className="group flex items-center justify-between border-b border-neutral-100 py-5"
                       onClick={() => setOpen(false)}
                     >
                       <span className="flex items-center gap-5">
-                        <span className="text-[0.62rem] font-semibold uppercase tracking-[0.4em] text-neutral-400">
+                        <span className="w-8 text-[0.6rem] font-semibold uppercase tracking-[0.4em] text-neutral-400">
                           {index}
                         </span>
-                        <span className="text-2xl font-light tracking-tight text-neutral-950 transition group-hover:text-[#7C8A3F]">
+                        <span
+                          className={`text-2xl font-light tracking-tight transition group-hover:text-[#7C8A3F] ${
+                            isActive ? 'text-[#7C8A3F]' : 'text-neutral-950'
+                          }`}
+                        >
                           {item.label}
                         </span>
+                        {isActive && (
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#7C8A3F]" />
+                        )}
                       </span>
                       <span
                         aria-hidden="true"
-                        className="text-[0.7rem] uppercase tracking-[0.3em] text-neutral-400 transition group-hover:translate-x-1 group-hover:text-[#7C8A3F]"
+                        className={`text-[0.7rem] uppercase tracking-[0.3em] transition group-hover:translate-x-1 group-hover:text-[#7C8A3F] ${
+                          isActive ? 'text-[#7C8A3F]' : 'text-neutral-400'
+                        }`}
                       >
                         →
                       </span>
@@ -446,28 +425,32 @@ export default function SiteHeader() {
               })}
             </ul>
 
-            <div className="mt-8 space-y-4">
+            <div className="mt-8 space-y-3">
               <Link
-                href="/contact"
+                href={header.ctaHref}
                 onClick={() => setOpen(false)}
-                className="group inline-flex w-full items-center justify-center gap-3 rounded-full bg-[#7C8A3F] px-8 py-4 text-[0.72rem] font-semibold uppercase tracking-[0.32em] text-white shadow-glow transition hover:bg-[#97a65a]"
+                className="group inline-flex w-full items-center justify-center gap-3 rounded-full bg-[#7C8A3F] px-8 py-4 text-[0.7rem] font-semibold uppercase tracking-[0.32em] text-white shadow-[0_4px_24px_rgba(124,138,63,0.42)] transition hover:bg-[#97a65a]"
               >
-                Inquire Now
+                {header.ctaLabel}
                 <span className="transition group-hover:translate-x-1">→</span>
               </Link>
-              <div className="grid grid-cols-2 gap-3 text-[0.62rem] font-medium uppercase tracking-[0.32em] text-neutral-500">
-                <a
-                  href="tel:+250783140000"
-                  className="rounded-sm border border-neutral-200 px-4 py-3 text-center transition hover:border-neutral-400 hover:text-neutral-950"
-                >
-                  +250 783 140 000
-                </a>
-                <a
-                  href="mailto:info@zuritravels.com"
-                  className="rounded-sm border border-neutral-200 px-4 py-3 text-center transition hover:border-neutral-400 hover:text-neutral-950"
-                >
-                  Email us
-                </a>
+              <div className="grid grid-cols-2 gap-3">
+                {contact.phone && (
+                  <a
+                    href={`tel:${contact.phone.replace(/\s/g, '')}`}
+                    className="rounded-full border border-neutral-200 px-4 py-3 text-center text-[0.6rem] font-medium uppercase tracking-[0.28em] text-neutral-600 transition hover:border-neutral-400 hover:text-neutral-950"
+                  >
+                    {contact.phone}
+                  </a>
+                )}
+                {contact.email && (
+                  <a
+                    href={`mailto:${contact.email}`}
+                    className="rounded-full border border-neutral-200 px-4 py-3 text-center text-[0.6rem] font-medium uppercase tracking-[0.28em] text-neutral-600 transition hover:border-neutral-400 hover:text-neutral-950"
+                  >
+                    Email us
+                  </a>
+                )}
               </div>
             </div>
           </nav>

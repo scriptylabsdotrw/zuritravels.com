@@ -3,29 +3,10 @@
 import { motion } from 'framer-motion';
 import Eyebrow from '@/components/ui/Eyebrow';
 import RevealText from '@/components/ui/RevealText';
+import type { SectionsContent } from '@/lib/types';
 
-const testimonials = [
-  {
-    name: 'Eleanor & James R.',
-    role: 'Gorilla Trek · Volcanoes NP',
-    quote:
-      'They turned a bucket-list idea into the most considered week of our lives. Every guide, every lodge, every quiet morning was chosen with intention — and it showed.',
-  },
-  {
-    name: 'Priya M.',
-    role: 'Great Migration · Serengeti',
-    quote:
-      'We have travelled with the big names. None of them know the ground like this. Our guide read the plains like a book, and we were always in exactly the right place.',
-  },
-  {
-    name: 'The Okonkwo Family',
-    role: 'Cultural Heritage · Rwanda',
-    quote:
-      'Unhurried, soulful, and deeply human. ZuriTravels designed a journey our children still talk about — and gave back to the communities we passed through.',
-  },
-];
-
-export default function TravellerVoices() {
+export default function TravellerVoices({ content }: { content: SectionsContent['voices'] }) {
+  const testimonials = content.items;
   return (
     <section className="relative overflow-hidden bg-neutral-50 py-28 md:py-40">
       <div
@@ -35,12 +16,12 @@ export default function TravellerVoices() {
 
       <div className="mx-auto w-full max-w-[1280px] px-6 lg:px-10">
         <div className="mb-16 max-w-2xl">
-          <Eyebrow>Voices from the journey</Eyebrow>
+          <Eyebrow>{content.eyebrow}</Eyebrow>
           <h2 className="mt-6 font-display text-[clamp(2.2rem,4.6vw,3.8rem)] font-semibold leading-[1.02] tracking-tight text-neutral-900">
-            <RevealText as="span" text="Built with the travellers" className="block" />
+            <RevealText as="span" text={content.titleL1} className="block" />
             <RevealText
               as="span"
-              text="who trust us with the wild."
+              text={content.titleL2}
               className="block text-gradient-brand"
               delay={0.1}
             />

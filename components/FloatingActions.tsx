@@ -2,13 +2,20 @@
 
 import { useEffect, useState } from 'react';
 
-const PHONE_E164 = '250783140000';
-const WA_MESSAGE = encodeURIComponent(
-  "Hello Zuri Travels — I'd like to plan a private journey.",
-);
+const FALLBACK_PHONE = '250783140000';
+const FALLBACK_MESSAGE = "Hello Zuri Travels — I'd like to plan a private journey.";
 
-export default function FloatingActions() {
+export default function FloatingActions({
+  whatsappNumber,
+  whatsappMessage,
+}: {
+  whatsappNumber?: string;
+  whatsappMessage?: string;
+}) {
   const [showTop, setShowTop] = useState(false);
+
+  const phone = (whatsappNumber || FALLBACK_PHONE).replace(/[^\d]/g, '');
+  const waMessage = encodeURIComponent(whatsappMessage || FALLBACK_MESSAGE);
 
   useEffect(() => {
     const onScroll = () => setShowTop(window.scrollY > 600);
@@ -50,7 +57,7 @@ export default function FloatingActions() {
 
       {/* WhatsApp */}
       <a
-        href={`https://wa.me/${PHONE_E164}?text=${WA_MESSAGE}`}
+        href={`https://wa.me/${phone}?text=${waMessage}`}
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat with us on WhatsApp"

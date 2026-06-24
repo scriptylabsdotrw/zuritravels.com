@@ -3,397 +3,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import type { SiteContent, Testimonial, Tour } from '@/lib/types';
+import type { SiteContent, Testimonial, Tour, VisitRwandaContent } from '@/lib/types';
 
-/* ────────────────────────────────────────────────────────────
-   IMAGERY — Rwanda-focused image pool, varied focal points
-   ──────────────────────────────────────────────────────────── */
-const u = (id: string, fpY = 0.5, fpX = 0.5, w = 2000) =>
-  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=85&crop=focalpoint&fp-x=${fpX}&fp-y=${fpY}`;
-
-/* Rwanda-specific Unsplash photo IDs — verified against unsplash.com/s/photos/rwanda */
-const IMG = {
-  heroSilverback: u('photo-1535941339077-2dd1c7963098', 0.35, 0.5, 2400),
-  gorillaPortrait: u('photo-1591824438708-ce405f36ba3d', 0.45),
-  intore: u('photo-1692019007242-36158877ec96', 0.45),
-  akageraSafari: u('photo-1665070385454-5e0c4421a38c', 0.5),
-  nyungweForest: u('photo-1489640818597-89b1edc97db5', 0.5),
-  lakeKivu: u('photo-1589715718565-223fdf9b7cd4', 0.45),
-  kigali: u('photo-1687986261123-b17f08f2796c', 0.5),
-  cultural: u('photo-1507427100689-2bf8574e32d4', 0.45),
-  heritage: u('photo-1631774991422-ccc98283d33f', 0.45),
-  memory: u('photo-1504432842672-1a79f78e4084', 0.35, 0.45),
-  aerialHills: u('photo-1551357141-f73a8402ceb3', 0.5),
-  modernKigali: u('photo-1689013398932-b576a11e07a1', 0.5),
-  kigaliStreet: u('photo-1518219051733-d8d4fbbf9797', 0.45),
-};
-
-/* ────────────────────────────────────────────────────────────
-   PLACES BY CATEGORY — a directory of Rwandan attractions
-   ──────────────────────────────────────────────────────────── */
-type Place = { name: string; location: string; note: string };
-type PlaceCategory = {
-  eyebrow: string;
-  title: string;
-  tagline: string;
-  description: string;
-  image: string;
-  alt: string;
-  places: Place[];
-};
-
-const placeCategories: PlaceCategory[] = [
-  {
-    eyebrow: 'Theme · 01',
-    title: 'Cultural',
-    tagline: 'Living tradition — dance, music, craft, royal heritage.',
-    description:
-      'Rwandan culture is not staged for travellers; it is alive in every village, household and Sunday afternoon. These are the doorways we open for our guests.',
-    image: IMG.cultural,
-    alt: 'Rwandan cultural life — children at a village window',
-    places: [
-      {
-        name: 'Intore Dance Performance',
-        location: 'Musanze · Kigali',
-        note: 'The warrior dance of memory and pride — privately performed at lodge or in-village.',
-      },
-      {
-        name: "Iby'Iwacu Cultural Village",
-        location: 'Musanze',
-        note: 'A reformed-poacher community model — drumming workshops, traditional cuisine, and host families.',
-      },
-      {
-        name: 'Inema Arts Centre',
-        location: 'Kigali',
-        note: "Rwanda's leading contemporary art atelier — studio visits with the Niyo brothers.",
-      },
-      {
-        name: 'Niyo Cultural Centre',
-        location: 'Kigali',
-        note: 'Children of Niyo programme, traditional performances, café, gallery.',
-      },
-      {
-        name: 'Imigongo Art Studios',
-        location: 'Eastern Province · Rusumo',
-        note: 'Geometric cow-dung art unique to Rwanda — workshops with master artisans.',
-      },
-      {
-        name: 'Caplaki Craft Village',
-        location: 'Kigali',
-        note: "The country's artisan market — basketry, wood, Imigongo, weaving.",
-      },
-    ],
-  },
-  {
-    eyebrow: 'Theme · 02',
-    title: 'History & Heritage',
-    tagline: 'Pre-colonial kingdoms, royal courts, and the long story.',
-    description:
-      "The Rwandan story begins long before colonial maps — at the Mwami's court at Rukari, in royal Inyambo cattle, and in the careful keeping of national memory.",
-    image: IMG.heritage,
-    alt: "Rukari, the King's Palace Museum in Nyanza",
-    places: [
-      {
-        name: "Rukari — King's Palace Museum",
-        location: 'Nyanza',
-        note: "The traditional Mwami's residence — thatched royal palace, Inyambo long-horned cattle, and a quiet hosted tour of pre-colonial kingdom history.",
-      },
-      {
-        name: 'Ethnographic Museum',
-        location: 'Huye (Butare)',
-        note: "Formerly the National Museum of Rwanda — the deepest ethnographic collection on the continent.",
-      },
-      {
-        name: 'Rwesero Art Museum',
-        location: 'Nyanza',
-        note: 'Modern and contemporary Rwandan art, housed in a former royal residence.',
-      },
-      {
-        name: 'Presidential Palace Museum',
-        location: 'Kanombe, Kigali',
-        note: 'The Habyarimana residence and the preserved wreckage of the 1994 plane on the grounds.',
-      },
-      {
-        name: 'Kandt House Museum of Natural History',
-        location: 'Kigali',
-        note: "The colonial-era home of Richard Kandt — Rwanda's natural history and early-20th-century context.",
-      },
-      {
-        name: 'King\'s Throne & Royal Forest',
-        location: 'Nyanza',
-        note: 'The royal forest beside Rukari, with ancient Erythrina trees planted by successive kings.',
-      },
-    ],
-  },
-  {
-    eyebrow: 'Theme · 03',
-    title: 'Memory & Remembrance',
-    tagline: 'The careful, public way Rwanda holds its own history.',
-    description:
-      "Rwanda's memorial sites are visited privately, slowly, and always with a hosted guide. They are not optional context — they are the country's most important rooms.",
-    image: IMG.memory,
-    alt: 'A quiet memorial site in Rwanda',
-    places: [
-      {
-        name: 'Kigali Genocide Memorial',
-        location: 'Gisozi, Kigali',
-        note: 'The principal national memorial — over 250,000 buried, and a deeply considered educational centre.',
-      },
-      {
-        name: 'Murambi Genocide Memorial',
-        location: 'Nyamagabe (Southern)',
-        note: 'The most confronting of the memorials — a former technical school preserved with stark honesty.',
-      },
-      {
-        name: 'Nyamata Church Memorial',
-        location: 'Bugesera',
-        note: 'A church preserved exactly as it was found, with belongings and clothing laid out in tribute.',
-      },
-      {
-        name: 'Ntarama Church Memorial',
-        location: 'Bugesera',
-        note: 'A second preserved church memorial in the same district — quieter, smaller, equally moving.',
-      },
-      {
-        name: 'Bisesero Memorial',
-        location: 'Western Province',
-        note: 'The "Hill of Resistance" — a memorial to those who fought back.',
-      },
-      {
-        name: 'Camp Kigali Memorial',
-        location: 'Kigali',
-        note: 'Ten white pillars commemorating the Belgian peacekeepers killed at the start of the genocide.',
-      },
-    ],
-  },
-  {
-    eyebrow: 'Theme · 04',
-    title: 'Nature & Wildlife',
-    tagline: 'Forests, volcanoes, savanna, and the great lakes.',
-    description:
-      "Four national parks across a country smaller than Belgium — and one of the most diverse one-week wildlife circuits on the continent.",
-    image: IMG.aerialHills,
-    alt: 'Aerial view of Rwanda — the land of a thousand hills',
-    places: [
-      {
-        name: 'Volcanoes National Park',
-        location: 'Musanze',
-        note: 'Mountain gorillas, golden monkeys, and the five Virunga summits.',
-      },
-      {
-        name: 'Akagera National Park',
-        location: 'Eastern Province',
-        note: 'The Big Five — lions returned in 2015, rhinos in 2017, in a wild lake-and-savanna landscape.',
-      },
-      {
-        name: 'Nyungwe National Park',
-        location: 'Southern Province',
-        note: "Africa's oldest rainforest, the canopy walk, 13 primate species and chimpanzees.",
-      },
-      {
-        name: 'Gishwati-Mukura National Park',
-        location: 'Western Province',
-        note: "Rwanda's newest and smallest park — chimpanzees, golden monkeys, regrowing forest.",
-      },
-      {
-        name: 'Lake Kivu',
-        location: 'Western border',
-        note: 'A freshwater lake the size of a small sea — coffee villages, pirogues, lakeside lodges.',
-      },
-      {
-        name: 'Twin Lakes Burera & Ruhondo',
-        location: 'Musanze',
-        note: 'Mirror lakes beneath the volcanoes — boating, lakeside walks, terraced landscape.',
-      },
-    ],
-  },
-  {
-    eyebrow: 'Theme · 05',
-    title: 'Modern Rwanda',
-    tagline: 'A new African capital you should plan three days for.',
-    description:
-      "Kigali is one of Africa's most design-led, safest, and walkable capitals — and worth a slow stay before or after the forests.",
-    image: IMG.modernKigali,
-    alt: 'Modern architecture in Kigali, Rwanda',
-    places: [
-      {
-        name: 'Kigali Convention Centre',
-        location: 'Kimihurura',
-        note: 'The iconic glass dome — a symbol of the new Kigali, lit each evening.',
-      },
-      {
-        name: 'Norrsken House Kigali',
-        location: 'CBD',
-        note: 'Pan-African entrepreneurship campus, café, and the city\'s sharpest co-working room.',
-      },
-      {
-        name: 'Kimironko Market',
-        location: 'Kimironko',
-        note: "The everyday market — fabrics, food, life. Best with a local host.",
-      },
-      {
-        name: 'Nyamirambo Walking Tour',
-        location: 'Nyamirambo',
-        note: "Hosted walks through Kigali's most multicultural neighbourhood, led by the Nyamirambo Women's Centre.",
-      },
-      {
-        name: 'Mount Kigali',
-        location: 'Western Kigali',
-        note: 'A 1,853m city hike with panoramic views and a quiet lunch at the top.',
-      },
-      {
-        name: 'Kigali Cultural Village',
-        location: 'Rebero',
-        note: "Traditional dance evenings, food market, and craft stalls — a relaxed Sunday option.",
-      },
-    ],
-  },
-];
-
-/* Hero stats are derived at render time from the SiteContent global. */
-
-const pillars: {
-  eyebrow: string;
-  title: string;
-  body: string;
-  bullets: string[];
-  image: string;
-  alt: string;
-}[] = [
-  {
-    eyebrow: 'Pillar · 01',
-    title: 'The Gorillas of Volcanoes',
-    body:
-      'Volcanoes National Park is the only place on Earth where you can trek to a habituated family of mountain gorillas in the morning and be home to a five-star bed by dusk. Twelve families. Eight permits per family per day. The most carefully protected wildlife encounter on the continent.',
-    bullets: [
-      'Habituated family treks — Susa, Agashya, Sabyinyo and more',
-      'Golden monkey tracking in the same forest',
-      'Karisimbi & Bisoke summit hikes',
-      'Conservation researcher access at Karisoke',
-    ],
-    image: IMG.gorillaPortrait,
-    alt: 'A young mountain gorilla in Volcanoes National Park',
-  },
-  {
-    eyebrow: 'Pillar · 02',
-    title: 'Intore, the Dance of Heroes',
-    body:
-      'Rwandan culture is not staged for visitors — it is alive in every village. The Intore dance was once a warrior’s preparation for battle; today it is a celebration of memory and pride. We host private performances, drumming workshops, and quiet evenings with elders who carry the country’s oral history.',
-    bullets: [
-      'Private Intore performances in Musanze',
-      'Drum workshops with Inanga and Ingoma masters',
-      'Hosted dinners with Rwandan historians',
-      'Kinyarwanda language tasters',
-    ],
-    image: IMG.intore,
-    alt: 'Rural Rwandan landscape — the green country of Intore tradition',
-  },
-  {
-    eyebrow: 'Pillar · 03',
-    title: 'Akagera — The Big Five Return',
-    body:
-      'A long, slow, deeply considered rewilding has brought the Big Five back to Rwanda. Lions returned in 2015, rhinos in 2017, and Akagera is now one of Africa’s most quietly impressive conservation stories — savanna, lake, papyrus swamp, and very few other vehicles.',
-    bullets: [
-      'Game drives across savanna and lake plains',
-      'Boat safari on Lake Ihema',
-      'Behind-the-scenes ranger and canine unit access',
-      'Magashi Camp — the only premium lodge in the park',
-    ],
-    image: IMG.akageraSafari,
-    alt: 'Giraffe in Akagera National Park, Rwanda',
-  },
-  {
-    eyebrow: 'Pillar · 04',
-    title: 'Nyungwe — Africa’s Oldest Rainforest',
-    body:
-      'A million-year-old montane forest in the southwest — 1,068 plant species, 322 bird species, 13 primates including the largest chimpanzee community in East Africa. Africa’s only suspended canopy walk swings 70 metres above the forest floor.',
-    bullets: [
-      'Chimpanzee tracking — habituated communities',
-      'Africa’s only suspended canopy walk',
-      'Colobus monkey super-groups (300+ individuals)',
-      'Tea estate visits and forest waterfalls',
-    ],
-    image: IMG.nyungweForest,
-    alt: 'Nyungwe rainforest canopy in Rwanda',
-  },
-  {
-    eyebrow: 'Pillar · 05',
-    title: 'Lake Kivu — A Quiet Pause',
-    body:
-      'A freshwater lake the size of a small sea, on the western border with the DRC. Coffee villages, fishing pirogues that sing at dawn, twin-island retreats, and the gentle pace that every good Rwandan itinerary needs in the middle.',
-    bullets: [
-      'Kibuye and Gisenyi lakeside stays',
-      'Coffee co-operative visits and washing-station tours',
-      'Pirogue boat charters at golden hour',
-      'Congo Nile Trail — walking or cycling',
-    ],
-    image: IMG.lakeKivu,
-    alt: 'A traditional pirogue on Lake Kivu, Rwanda',
-  },
-  {
-    eyebrow: 'Pillar · 06',
-    title: 'Kigali — Africa, Quietly Reimagined',
-    body:
-      'The cleanest capital in Africa, the safest country on the continent for solo travellers, and a design-led city worth its own three days. Memorial, museum, market, ateliers, hosted dinners with curators — Kigali is where every Rwandan journey should begin and end.',
-    bullets: [
-      'Kigali Genocide Memorial — privately hosted',
-      'Inema Arts Centre & emerging studios',
-      'Niyo Cultural Centre and Caplaki market',
-      'Hosted dinners with writers and curators',
-    ],
-    image: IMG.kigali,
-    alt: 'Kigali, the capital of Rwanda',
-  },
-];
-
-const facts: { k: string; v: string }[] = [
-  { k: 'Capital', v: 'Kigali' },
-  { k: 'Population', v: '~13.5 million' },
-  { k: 'Languages', v: 'Kinyarwanda · English · French · Swahili' },
-  { k: 'Currency', v: 'Rwandan Franc (RWF) · USD widely accepted' },
-  { k: 'Visa', v: 'On arrival / e-visa · USD 50' },
-  { k: 'Time zone', v: 'Central Africa Time (UTC+2)' },
-  { k: 'Climate', v: 'Temperate · 18 – 27 °C year-round' },
-  { k: 'Plug', v: 'Type C / J · 230 V · 50 Hz' },
-  { k: 'Drive', v: 'Right-hand side · valid licence required' },
-  { k: 'Main gateway', v: 'Kigali International (KGL) · 30 min from CBD' },
-];
-
-const seasons: {
-  span: string;
-  name: string;
-  body: string;
-  best: string[];
-}[] = [
-  {
-    span: 'Jun – Sep',
-    name: 'Long dry season',
-    body:
-      'The classic, golden-light window. Drier trails into Volcanoes, easier chimp tracking in Nyungwe, prime Akagera game viewing. Lodges fill 8 – 10 months ahead.',
-    best: ['Gorillas', 'Chimps', 'Safari'],
-  },
-  {
-    span: 'Oct – Nov',
-    name: 'Short rains',
-    body:
-      'Short, sharp afternoon rains. Far fewer travellers, deeply photogenic light, lush forest. A favourite of our designers for quieter, more intimate journeys.',
-    best: ['Photography', 'Birding', 'Honeymoon'],
-  },
-  {
-    span: 'Dec – Feb',
-    name: 'Short dry season',
-    body:
-      'The second prime window — warm days, clear skies, festive. Holiday demand is high, so we book this season earliest.',
-    best: ['Gorillas', 'Family travel', 'Festive'],
-  },
-  {
-    span: 'Mar – May',
-    name: 'Long rains',
-    body:
-      'Lush, dramatic, and almost empty. Trails are slippery and treks more demanding, but the photography is unrivalled and lodge rates ease.',
-    best: ['Active travellers', 'Off-peak rates', 'Birding'],
-  },
-];
+/* Image fallbacks used only when the CMS field is empty. */
+const HERO_FALLBACK = '/images/simone-dinoia-x7Aizp5YZX0-unsplash.jpg';
+const TESTIMONIAL_FALLBACK = '/images/kelly-umuringa-4Ao1XfeaMWM-unsplash.jpg';
 
 /* ────────────────────────────────────────────────────────────
    MOTION
@@ -408,14 +22,28 @@ const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } };
    PAGE
    ──────────────────────────────────────────────────────────── */
 export default function VisitRwandaView({
+  content,
   tours,
   siteContent,
   featuredTestimonial,
 }: {
+  content: VisitRwandaContent;
   tours: Tour[];
   siteContent: SiteContent;
   featuredTestimonial: Testimonial | null;
 }) {
+  const {
+    hero,
+    manifesto,
+    pillarsHeader,
+    pillars,
+    directory,
+    placeCategories,
+    facts,
+    seasons,
+    tours: toursSection,
+    finalCta,
+  } = content;
   const heroStats = [
     siteContent.mountainGorillas && {
       value: siteContent.mountainGorillas,
@@ -443,7 +71,7 @@ export default function VisitRwandaView({
       <section className="relative isolate flex h-[100svh] min-h-[760px] w-full flex-col overflow-hidden">
         <div className="absolute inset-0 -z-10">
           <Image
-            src={siteContent.visitRwandaHeroImage || IMG.heroSilverback}
+            src={siteContent.visitRwandaHeroImage || HERO_FALLBACK}
             alt="A silverback mountain gorilla in Volcanoes National Park, Rwanda"
             fill
             priority
@@ -470,7 +98,7 @@ export default function VisitRwandaView({
                   VR
                 </span>
                 <span className="text-[0.6rem] font-semibold uppercase tracking-[0.5em]">
-                  Visit Rwanda · Official partner
+                  {hero.badge}
                 </span>
               </motion.div>
 
@@ -478,32 +106,31 @@ export default function VisitRwandaView({
                 variants={reveal}
                 className="text-balance text-[clamp(3rem,9.5vw,9rem)] leading-[0.9] tracking-[-0.05em]"
               >
-                <span className="block font-light">Visit</span>
-                <span className="block font-bold text-[#7C8A3F]">Rwanda.</span>
+                <span className="block font-light">{hero.titleLight}</span>
+                <span className="block font-bold text-[#7C8A3F]">{hero.titleAccent}</span>
               </motion.h1>
 
               <motion.p
                 variants={reveal}
                 className="mt-8 max-w-xl text-balance text-xl leading-9 text-white/85 lg:text-2xl lg:leading-10"
               >
-                A small, considered country of forested volcanoes, glassy lakes, and the world’s
-                most carefully protected primates — the land of a thousand hills.
+                {hero.body}
               </motion.p>
 
               <motion.div variants={reveal} className="mt-10 flex flex-wrap items-center gap-7">
                 <Link
-                  href="/contact"
+                  href={hero.cta1Href}
                   className="group inline-flex items-center gap-3 rounded-full bg-[#7C8A3F] px-8 py-4 text-[0.72rem] font-semibold uppercase tracking-[0.32em] text-white transition hover:bg-white hover:text-neutral-950"
                 >
-                  Plan your Rwanda trip
+                  {hero.cta1Label}
                   <span className="transition group-hover:translate-x-1">→</span>
                 </Link>
                 <Link
-                  href="/destinations/rwanda"
+                  href={hero.cta2Href}
                   className="group inline-flex items-center gap-3 text-[0.72rem] font-semibold uppercase tracking-[0.32em] text-white/90 transition hover:text-[#7C8A3F]"
                 >
                   <span className="relative pb-1">
-                    View Rwanda tours
+                    {hero.cta2Label}
                     <span className="absolute -bottom-0 left-0 h-px w-full bg-white/40 transition group-hover:bg-[#7C8A3F]" />
                   </span>
                 </Link>
@@ -547,9 +174,9 @@ export default function VisitRwandaView({
             <motion.div variants={reveal} className="flex items-start gap-5">
               <span className="mt-3 inline-block h-px w-10 bg-[#7C8A3F]" />
               <span className="text-[0.62rem] font-medium uppercase tracking-[0.4em] text-neutral-500">
-                Why Rwanda
+                {manifesto.eyebrowTop}
                 <br />
-                <span className="text-neutral-400">Index · 01</span>
+                <span className="text-neutral-400">{manifesto.eyebrowIndex}</span>
               </span>
             </motion.div>
 
@@ -557,10 +184,7 @@ export default function VisitRwandaView({
               variants={reveal}
               className="text-balance text-[clamp(1.85rem,3.8vw,3.4rem)] font-light leading-[1.18] tracking-[-0.025em] text-neutral-950"
             >
-              Few countries are so easy to fall in love with. Rwanda is the{' '}
-              <span className="font-bold text-[#7C8A3F]">safest</span> country we work in, the
-              easiest to enter, and home to one of the most quietly impressive conservation stories
-              on the continent — written in <span className="italic">a single generation</span>.
+              {manifesto.body}
             </motion.p>
           </motion.div>
         </div>
@@ -580,17 +204,14 @@ export default function VisitRwandaView({
           >
             <div className="space-y-4">
               <p className="text-[0.62rem] font-medium uppercase tracking-[0.4em] text-[#7C8A3F]">
-                Index · 02 — The six Rwandas
+                {pillarsHeader.eyebrow}
               </p>
               <h2 className="text-balance text-[clamp(2.2rem,4.6vw,3.8rem)] leading-tight tracking-[-0.025em] text-neutral-950">
-                <span className="font-bold">Six countries</span>{' '}
-                <span className="font-light">inside one.</span>
+                <span className="font-bold">{pillarsHeader.titleBold}</span>{' '}
+                <span className="font-light">{pillarsHeader.titleLight}</span>
               </h2>
             </div>
-            <p className="max-w-md text-sm leading-7 text-neutral-600">
-              Most travellers see two — gorillas and Kigali. The Rwanda we design is six places,
-              stitched together at the pace of the road.
-            </p>
+            <p className="max-w-md text-sm leading-7 text-neutral-600">{pillarsHeader.body}</p>
           </motion.header>
 
           {pillars.map((p, i) => {
@@ -663,17 +284,14 @@ export default function VisitRwandaView({
           >
             <div className="space-y-4">
               <p className="text-[0.62rem] font-medium uppercase tracking-[0.4em] text-[#7C8A3F]">
-                Index · 03 — Directory
+                {directory.eyebrow}
               </p>
               <h2 className="text-balance text-[clamp(2.2rem,4.6vw,3.8rem)] leading-tight tracking-[-0.025em] text-neutral-950">
-                <span className="font-light">Places to visit,</span>{' '}
-                <span className="font-bold">by theme.</span>
+                <span className="font-light">{directory.titleLight}</span>{' '}
+                <span className="font-bold">{directory.titleBold}</span>
               </h2>
             </div>
-            <p className="max-w-md text-sm leading-7 text-neutral-600">
-              Use this directory to begin a shortlist — every itinerary we design is a slow,
-              considered selection from these places.
-            </p>
+            <p className="max-w-md text-sm leading-7 text-neutral-600">{directory.body}</p>
           </motion.header>
 
           {/* Category tab row — anchor links to each category */}
@@ -685,7 +303,7 @@ export default function VisitRwandaView({
             className="mb-12 flex flex-wrap items-center gap-2 border-y border-neutral-200 py-4"
           >
             <span className="mr-3 text-[0.58rem] font-medium uppercase tracking-[0.4em] text-neutral-400">
-              Jump to
+              {directory.jumpLabel}
             </span>
             {placeCategories.map((c) => (
               <a
@@ -779,20 +397,18 @@ export default function VisitRwandaView({
           >
             <div className="space-y-4">
               <p className="text-[0.62rem] font-medium uppercase tracking-[0.4em] text-[#7C8A3F]">
-                Index · 04 — Practical
+                {facts.eyebrow}
               </p>
               <h2 className="text-balance text-[clamp(2.2rem,4.6vw,3.6rem)] font-light leading-tight tracking-[-0.025em] text-neutral-950">
-                Rwanda <span className="font-bold">at a glance.</span>
+                {facts.headingLead}
+                <span className="font-bold">{facts.headingAccent}</span>
               </h2>
             </div>
-            <p className="max-w-md text-sm leading-7 text-neutral-600">
-              Everything you’d ask a friend before you book — the practical details we get asked
-              most.
-            </p>
+            <p className="max-w-md text-sm leading-7 text-neutral-600">{facts.body}</p>
           </motion.header>
 
           <ul className="grid grid-cols-1 gap-px overflow-hidden rounded-sm bg-neutral-200/80 sm:grid-cols-2 lg:grid-cols-2">
-            {facts.map((f) => (
+            {facts.items.map((f) => (
               <li key={f.k} className="bg-white px-8 py-7">
                 <p className="text-[0.6rem] font-medium uppercase tracking-[0.32em] text-neutral-500">
                   {f.k}
@@ -814,20 +430,18 @@ export default function VisitRwandaView({
               <div className="flex items-center gap-5">
                 <span className="inline-block h-px w-10 bg-[#7C8A3F]" />
                 <span className="text-[0.62rem] font-medium uppercase tracking-[0.4em] text-white/55">
-                  Index · 05 — Seasons
+                  {seasons.eyebrow}
                 </span>
               </div>
               <h2 className="mt-8 text-balance text-[clamp(2.2rem,4.6vw,3.8rem)] font-light leading-[1.02] tracking-[-0.03em]">
-                When to <span className="font-bold text-[#7C8A3F]">visit Rwanda.</span>
+                {seasons.headingLead}
+                <span className="font-bold text-[#7C8A3F]">{seasons.headingAccent}</span>
               </h2>
-              <p className="mt-7 max-w-md text-base leading-8 text-white/70">
-                Rwanda is a year-round country, but each season has its own personality. Our
-                designers shape every itinerary around the rhythm of the trees, not the brochure.
-              </p>
+              <p className="mt-7 max-w-md text-base leading-8 text-white/70">{seasons.body}</p>
             </div>
 
             <ol className="space-y-px">
-              {seasons.map((s, i) => (
+              {seasons.items.map((s, i) => (
                 <motion.li
                   key={s.span}
                   initial={{ opacity: 0, y: 20 }}
@@ -880,16 +494,15 @@ export default function VisitRwandaView({
             >
               <div className="space-y-4">
                 <p className="text-[0.62rem] font-medium uppercase tracking-[0.4em] text-[#7C8A3F]">
-                  Index · 06 — Curated
+                  {toursSection.eyebrow}
                 </p>
                 <h2 className="text-balance text-[clamp(2.2rem,4.6vw,3.6rem)] font-light leading-tight tracking-[-0.025em] text-neutral-950">
-                  Our <span className="font-bold">Rwanda</span> routes.
+                  {toursSection.titleLead}
+                  <span className="font-bold">{toursSection.titleAccent}</span>
+                  {toursSection.titleRest}
                 </h2>
               </div>
-              <p className="max-w-md text-sm leading-7 text-neutral-600">
-                Each route is a starting point — bring us your dates and we tune the lodges, pace,
-                and order around the way you travel.
-              </p>
+              <p className="max-w-md text-sm leading-7 text-neutral-600">{toursSection.body}</p>
             </motion.header>
 
             <ul className="grid gap-6 md:grid-cols-2">
@@ -943,10 +556,10 @@ export default function VisitRwandaView({
 
             <div className="mt-8 flex justify-center">
               <Link
-                href="/destinations/rwanda"
+                href={toursSection.ctaHref}
                 className="group inline-flex items-center gap-3 rounded-full border border-neutral-300 px-7 py-3 text-[0.7rem] font-semibold uppercase tracking-[0.32em] text-neutral-950 transition hover:border-[#7C8A3F] hover:text-[#7C8A3F]"
               >
-                See all Rwanda tours
+                {toursSection.ctaLabel}
                 <span className="transition group-hover:translate-x-1">→</span>
               </Link>
             </div>
@@ -969,7 +582,7 @@ export default function VisitRwandaView({
                 className="relative isolate hidden aspect-[4/5] overflow-hidden rounded-sm lg:block"
               >
                 <Image
-                  src={featuredTestimonial.image || IMG.kigaliStreet}
+                  src={featuredTestimonial.image || TESTIMONIAL_FALLBACK}
                   alt={featuredTestimonial.attribution}
                   fill
                   sizes="(min-width: 1024px) 540px, 100vw"
@@ -1031,32 +644,32 @@ export default function VisitRwandaView({
                 variants={reveal}
                 className="text-[0.62rem] font-medium uppercase tracking-[0.4em] text-[#7C8A3F]"
               >
-                Begin
+                {finalCta.eyebrow}
               </motion.p>
               <motion.h2
                 variants={reveal}
                 className="text-balance text-[clamp(2.4rem,5.2vw,4.6rem)] font-light leading-[1.02] tracking-[-0.035em]"
               >
-                <span className="font-light">A privately designed Rwanda journey,</span>
+                <span className="font-light">{finalCta.titleLight}</span>
                 <br />
-                <span className="font-bold text-[#7C8A3F]">tuned to the way you travel.</span>
+                <span className="font-bold text-[#7C8A3F]">{finalCta.titleAccent}</span>
               </motion.h2>
             </div>
 
             <motion.div variants={reveal} className="flex flex-col gap-4 lg:items-end">
               <Link
-                href="/contact"
+                href={finalCta.ctaHref}
                 className="group inline-flex w-fit items-center gap-3 rounded-full bg-[#7C8A3F] px-9 py-4 text-[0.72rem] font-semibold uppercase tracking-[0.32em] text-white transition hover:bg-white hover:text-neutral-950"
               >
-                Inquire Now
+                {finalCta.ctaLabel}
                 <span className="transition group-hover:translate-x-1">→</span>
               </Link>
               <Link
-                href="/destinations/rwanda"
+                href={finalCta.cta2Href}
                 className="group inline-flex w-fit items-center gap-3 text-[0.72rem] font-semibold uppercase tracking-[0.32em] text-white/75 transition hover:text-[#7C8A3F]"
               >
                 <span className="relative pb-1">
-                  Browse Rwanda tours
+                  {finalCta.cta2Label}
                   <span className="absolute -bottom-0 left-0 h-px w-full bg-white/30 transition group-hover:bg-[#7C8A3F]" />
                 </span>
               </Link>

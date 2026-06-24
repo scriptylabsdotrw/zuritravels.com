@@ -4,6 +4,7 @@ import { Space_Grotesk, Inter } from 'next/font/google';
 import SiteHeader from '@/components/SiteHeader';
 import Footer from '@/components/Footer';
 import FloatingActions from '@/components/FloatingActions';
+import { getFooter, getHeader, getSiteContent } from '@/lib/data';
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
@@ -33,14 +34,29 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://zuritravels.com'),
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const [header, footer, site] = await Promise.all([
+    getHeader(),
+    getFooter(),
+    getSiteContent(),
+  ]);
+
+  const contact = {
+    phone: site.studioPhone,
+    email: site.studioEmail,
+    address: site.studioAddress,
+  };
+
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${inter.variable}`}>
       <body className="bg-brand-surface text-brand-ink antialiased">
-        <SiteHeader />
+        <SiteHeader header={header} contact={contact} />
         {children}
-        <Footer />
-        <FloatingActions />
+        <Footer footer={footer} contact={contact} />
+        <FloatingActions
+          whatsappNumber={site.whatsappNumber}
+          whatsappMessage={site.whatsappMessage}
+        />
       </body>
     </html>
   );

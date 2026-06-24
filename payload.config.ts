@@ -19,6 +19,15 @@ import { PressFeatures } from './src/collections/PressFeatures';
 import { Principles } from './src/collections/Principles';
 import { Milestones } from './src/collections/Milestones';
 import { SiteContent } from './src/globals/SiteContent';
+import { Header } from './src/globals/Header';
+import { Footer } from './src/globals/Footer';
+import { Home } from './src/globals/Home';
+import { About } from './src/globals/About';
+import { VisitRwanda } from './src/globals/VisitRwanda';
+import { Sections } from './src/globals/Sections';
+import { DestinationsPage } from './src/globals/Destinations';
+import { Contact } from './src/globals/Contact';
+import { JournalPageGlobal } from './src/globals/Journal';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -56,7 +65,18 @@ export default buildConfig({
     Milestones,
     Enquiries,
   ],
-  globals: [SiteContent],
+  globals: [
+    SiteContent,
+    Header,
+    Footer,
+    Home,
+    About,
+    VisitRwanda,
+    Sections,
+    DestinationsPage,
+    Contact,
+    JournalPageGlobal,
+  ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

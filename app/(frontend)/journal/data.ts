@@ -23,7 +23,7 @@ export type Article = {
   slug: string;
   title: string;
   excerpt: string;
-  /** Long-form body — array of paragraphs (rendered as <p>) so we don't need a markdown lib yet. */
+  /** Long-form body — array of paragraphs (rendered as <p>) so we don’t need a markdown lib yet. */
   body: string[];
   /** Optional pull-quote inserted halfway through the article body. */
   pullQuote?: { quote: string; attribution: string };
@@ -37,21 +37,17 @@ export type Article = {
   featured?: boolean;
 };
 
-/* shared image pool — each entry is a distinct framed URL.
-   Same base photo with different focal points counts as a different image. */
-const u = (id: string, fpY = 0.5, fpX = 0.5) =>
-  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1800&q=85&crop=focalpoint&fp-x=${fpX}&fp-y=${fpY}`;
-
+/* shared image pool — local images from /public/images */
 const IMG = {
-  gorillaFace: u('photo-1535941339077-2dd1c7963098', 0.35),
-  gorillaForest: u('photo-1591824438708-ce405f36ba3d', 0.45),
-  serengetiPlains: u('photo-1547970810-dc1eac37d174', 0.55),
-  ngorongoroDawn: u('photo-1547970810-dc1eac37d174', 0.25, 0.35), // same photo, top focal
-  culturalKigali: u('photo-1523805009345-7448845a9e53', 0.4),
-  coastDhow: u('photo-1589552416260-89fd1b39e9b8', 0.35),
-  coastWater: u('photo-1589552416260-89fd1b39e9b8', 0.7, 0.4), // same photo, lower focal
-  elephantHerd: u('photo-1516426122078-c23e76319801', 0.45),
-  guidePortrait: u('photo-1504432842672-1a79f78e4084', 0.3),
+  gorillaFace:     '/images/simone-dinoia-x7Aizp5YZX0-unsplash.jpg',
+  gorillaForest:   '/images/2h-media-FKcRXTOHG8M-unsplash.jpg',
+  serengetiPlains: '/images/34417507774_a20f845d51_b.jpg',
+  ngorongoroDawn:  '/images/35095463862_799645aa4d_b.jpg',
+  culturalKigali:  '/images/kelly-umuringa-4Ao1XfeaMWM-unsplash.jpg',
+  coastDhow:       '/images/nyungwewaterfall.jpg',
+  coastWater:      '/images/NYUNGWE.jpg',
+  elephantHerd:    '/images/49454989927_e6a77a7cef_b.jpg',
+  guidePortrait:   '/images/49454780251_beb36dda2f_b.jpg',
 };
 
 /* ─────────────────────────────────────────────────────────

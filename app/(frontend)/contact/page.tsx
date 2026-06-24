@@ -1,4 +1,4 @@
-import { getDestinations, getSiteContent } from '@/lib/data';
+import { getContact, getDestinations, getSiteContent } from '@/lib/data';
 import ContactView from './_view';
 
 export const dynamic = 'force-dynamic';
@@ -10,9 +10,10 @@ export const metadata = {
 };
 
 export default async function ContactPage() {
-  const [destinations, siteContent] = await Promise.all([
+  const [destinations, siteContent, content] = await Promise.all([
     getDestinations(),
     getSiteContent(),
+    getContact(),
   ]);
-  return <ContactView destinations={destinations} siteContent={siteContent} />;
+  return <ContactView destinations={destinations} siteContent={siteContent} content={content} />;
 }

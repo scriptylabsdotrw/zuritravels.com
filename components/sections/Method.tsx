@@ -5,35 +5,10 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import Eyebrow from '@/components/ui/Eyebrow';
 import RevealText from '@/components/ui/RevealText';
+import type { SectionsContent } from '@/lib/types';
 
-const pillars = [
-  {
-    n: '01',
-    label: 'Guides',
-    title: 'Local experts, lifelong trackers',
-    body: 'Every journey is led by guides born to these landscapes — naturalists who have followed the same gorilla families and migration herds for the better part of two decades.',
-  },
-  {
-    n: '02',
-    label: 'Lodges',
-    title: 'Hand-picked camps & houses',
-    body: 'We stay only in lodges we have walked ourselves — the finest forest houses, plains camps and island retreats, chosen for craft, conscience and a genuine sense of place.',
-  },
-  {
-    n: '03',
-    label: 'Design',
-    title: 'Bespoke, unhurried itineraries',
-    body: 'No fixed departures, no convoys. Each route is composed by hand around your pace and your curiosities — measured in stories, not stops.',
-  },
-  {
-    n: '04',
-    label: 'Conservation',
-    title: 'Travel that gives back',
-    body: 'Permits and partnerships that fund anti-poaching, habitat protection and community tourism — so the wild places you visit are still wild for those who follow.',
-  },
-];
-
-export default function Method() {
+export default function Method({ content }: { content: SectionsContent['method'] }) {
+  const { pillars } = content;
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
   const y1 = useTransform(scrollYProgress, [0, 1], [60, -60]);
@@ -44,21 +19,18 @@ export default function Method() {
       <div className="mx-auto w-full max-w-[1280px] px-6 lg:px-10">
         <div className="grid items-center gap-16 lg:grid-cols-12">
           <div className="lg:col-span-5">
-            <Eyebrow>The ZuriTravels Method</Eyebrow>
+            <Eyebrow>{content.eyebrow}</Eyebrow>
             <h2 className="mt-6 font-display text-[clamp(2.2rem,4.6vw,3.8rem)] font-semibold leading-[1.02] tracking-tight text-neutral-900">
-              <RevealText as="span" text="Four pillars." className="block" />
-              <RevealText as="span" text="One way of travelling" className="block" delay={0.08} />
+              <RevealText as="span" text={content.titleL1} className="block" />
+              <RevealText as="span" text={content.titleL2} className="block" delay={0.08} />
               <RevealText
                 as="span"
-                text="through Africa."
+                text={content.titleL3}
                 className="block text-gradient-brand"
                 delay={0.16}
               />
             </h2>
-            <p className="mt-7 max-w-md text-[16px] leading-relaxed text-neutral-500">
-              Guides, lodges, design and conservation — composed into a single, considered
-              framework that turns a trip into the journey of a lifetime.
-            </p>
+            <p className="mt-7 max-w-md text-[16px] leading-relaxed text-neutral-500">{content.body}</p>
           </div>
 
           <div className="relative lg:col-span-7">
@@ -68,7 +40,7 @@ export default function Method() {
                 className="relative aspect-[3/4] overflow-hidden rounded-3xl ring-1 ring-inset ring-neutral-900/10"
               >
                 <Image
-                  src="https://images.unsplash.com/photo-1591824438708-ce405f36ba3d?auto=format&fit=crop&w=1200&q=85"
+                  src={content.image1}
                   alt="Mountain gorilla in the forest canopy"
                   fill
                   sizes="(min-width: 1024px) 28vw, 45vw"
@@ -80,7 +52,7 @@ export default function Method() {
                 className="relative aspect-[3/4] translate-y-12 overflow-hidden rounded-3xl ring-1 ring-inset ring-neutral-900/10"
               >
                 <Image
-                  src="https://images.unsplash.com/photo-1504432842672-1a79f78e4084?auto=format&fit=crop&w=1200&q=85"
+                  src={content.image2}
                   alt="A local guide on safari"
                   fill
                   sizes="(min-width: 1024px) 28vw, 45vw"
@@ -98,12 +70,11 @@ export default function Method() {
             >
               <p className="text-[14px] leading-relaxed text-neutral-900">
                 <span className="font-display text-[#7C8A3F]">&ldquo;</span>
-                A great journey isn&rsquo;t luck. It&rsquo;s the quiet sum of disciplined choices,
-                made by people who know the ground.
+                {content.quote}
                 <span className="font-display text-[#7C8A3F]">&rdquo;</span>
               </p>
               <p className="mt-3 text-[11px] uppercase tracking-[0.2em] text-neutral-400">
-                ZuriTravels · Guiding Team
+                {content.quoteAttribution}
               </p>
             </motion.div>
           </div>

@@ -8,6 +8,7 @@ import {
   TIERS,
   tierMeta,
   tourTiers,
+  type ContactContent,
   type Destination,
   type SiteContent,
   type Tier,
@@ -23,9 +24,11 @@ const stagger = { hidden: {}, show: { transition: { staggerChildren: 0.08 } } };
 export default function ContactView({
   destinations,
   siteContent,
+  content,
 }: {
   destinations: Destination[];
   siteContent: SiteContent;
+  content: ContactContent;
 }) {
   const contactRows = [
     siteContent.studioAddress && { k: 'Studio', v: siteContent.studioAddress },
@@ -102,21 +105,19 @@ export default function ContactView({
               <motion.div variants={reveal} className="flex items-center gap-5">
                 <span className="h-px w-12 bg-[#7C8A3F]" />
                 <span className="text-[0.62rem] font-medium uppercase tracking-[0.4em] text-neutral-500">
-                  Inquire now · Configurator
+                  {content.eyebrow}
                 </span>
               </motion.div>
               <motion.h1
                 variants={reveal}
                 className="text-balance text-[clamp(2.8rem,7vw,6.4rem)] leading-[0.94] tracking-[-0.045em] text-neutral-950"
               >
-                <span className="block font-light">Plan your</span>
-                <span className="block font-bold text-[#7C8A3F]">trip.</span>
+                <span className="block font-light">{content.titleLight}</span>
+                <span className="block font-bold text-[#7C8A3F]">{content.titleAccent}</span>
               </motion.h1>
             </div>
             <motion.p variants={reveal} className="max-w-lg text-lg leading-9 text-neutral-600">
-              Select your destination, itinerary, and tier. Share your dates, and a Travel Designer
-              will respond personally within 24 hours. Pure expertise — no templates, no call
-              centres.
+              {content.body}
             </motion.p>
           </motion.div>
         </div>
@@ -447,18 +448,14 @@ export default function ContactView({
                 }),
               });
               if (!res.ok) throw new Error(`Submission failed (${res.status})`);
-              setSubmitMessage(
-                'Thank you. A Travel Designer will reply personally within 24 hours.',
-              );
+              setSubmitMessage(content.successMessage);
               (e.currentTarget as HTMLFormElement).reset();
               setDestinationSlug(null);
               setTourSlug(null);
               setTier(null);
             } catch (err) {
               console.error(err);
-              setSubmitMessage(
-                'Something went wrong — please email info@zuritravels.com directly.',
-              );
+              setSubmitMessage(content.errorMessage);
             } finally {
               setSubmitting(false);
             }
@@ -490,7 +487,7 @@ export default function ContactView({
           {/* Live summary */}
           <div className="mt-2 rounded-sm bg-neutral-50/80 p-6 ring-1 ring-neutral-200/80">
             <p className="text-[0.62rem] font-medium uppercase tracking-[0.4em] text-neutral-500">
-              Your journey so far
+              {content.summaryHeading}
             </p>
             <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
               {summary.length === 0 && (
@@ -513,9 +510,7 @@ export default function ContactView({
           </div>
 
           <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
-            <p className="max-w-sm text-sm leading-7 text-neutral-500">
-              We reply personally within 24 hours. No mailing list. Ever.
-            </p>
+            <p className="max-w-sm text-sm leading-7 text-neutral-500">{content.formFooter}</p>
             <button
               type="submit"
               disabled={!ready || submitting}

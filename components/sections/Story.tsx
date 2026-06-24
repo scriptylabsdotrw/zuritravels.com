@@ -5,47 +5,10 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import Eyebrow from '@/components/ui/Eyebrow';
 import RevealText from '@/components/ui/RevealText';
+import type { SectionsContent } from '@/lib/types';
 
-const chapters = [
-  {
-    year: '2018',
-    chapter: '01',
-    title: 'Founded in Kigali.',
-    body: 'ZuriTravels begins with a single gorilla-trekking route through Volcanoes National Park — and one belief: that Africa is best experienced through the eyes of the guides, trackers and conservationists who call the wilderness home.',
-    image:
-      'https://images.unsplash.com/photo-1509897739002-791fa79aac9b?auto=format&fit=crop&w=1800&q=85',
-    stat: { v: '1', l: 'Route. One belief.' },
-  },
-  {
-    year: '2020',
-    chapter: '02',
-    title: 'Across the borders.',
-    body: 'Journeys expand into Tanzania, Kenya and Uganda — building relationships with the finest forest lodges, plains camps and lifelong trackers across East Africa, and a logistics backbone almost no studio has.',
-    image:
-      'https://images.unsplash.com/photo-1547970810-dc1eac37d174?auto=format&fit=crop&w=1800&q=85',
-    stat: { v: '6', l: 'Countries crafted' },
-  },
-  {
-    year: '2023',
-    chapter: '03',
-    title: 'Conservation first.',
-    body: 'Every itinerary is built on lodges and parks that fund gorilla conservation and community tourism — travel designed so that the wild places we love are still here for the next generation of travellers.',
-    image:
-      'https://images.pexels.com/photos/840111/pexels-photo-840111.jpeg?auto=compress&cs=tinysrgb&w=1800&q=85',
-    stat: { v: '100%', l: 'Permits, conservation-funded' },
-  },
-  {
-    year: 'Today',
-    chapter: '04',
-    title: 'Soulful at scale.',
-    body: 'A studio of local guides and designers, thousands of travellers hosted, and partnerships with the most quietly extraordinary lodges on the continent — the most considered bespoke-travel house in the region.',
-    image:
-      'https://images.unsplash.com/photo-1523805009345-7448845a9e53?auto=format&fit=crop&w=1800&q=85',
-    stat: { v: 'Africa', l: 'Through local eyes' },
-  },
-];
-
-export default function Story() {
+export default function Story({ content }: { content: SectionsContent['story'] }) {
+  const { chapters } = content;
   const wrapRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: wrapRef, offset: ['start start', 'end end'] });
 
@@ -81,12 +44,12 @@ export default function Story() {
         >
           <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between md:gap-12">
             <div className="max-w-2xl">
-              <Eyebrow variant="dark">Our Story</Eyebrow>
+              <Eyebrow variant="dark">{content.eyebrow}</Eyebrow>
               <h2 className="mt-6 font-display text-[clamp(2.2rem,4.6vw,3.8rem)] font-semibold leading-[1.02] tracking-tight md:text-[clamp(2.5rem,7vw,6.5rem)]">
-                <RevealText as="span" text="A studio built by Africa," className="block text-white" />
+                <RevealText as="span" text={content.titleL1} className="block text-white" />
                 <RevealText
                   as="span"
-                  text="for the world."
+                  text={content.titleL2}
                   className="block text-gradient-brand"
                   delay={0.1}
                 />
@@ -141,11 +104,11 @@ export default function Story() {
 
                     <div className="glass-dark absolute bottom-5 left-5 max-w-[220px] rounded-2xl p-4">
                       <p className="font-display text-2xl font-semibold tracking-tight text-white md:text-3xl">
-                        {c.stat.v}
+                        {c.statValue}
                         <span className="text-[#7C8A3F]">.</span>
                       </p>
                       <p className="mt-1 text-[10.5px] uppercase tracking-[0.22em] text-white/55">
-                        {c.stat.l}
+                        {c.statLabel}
                       </p>
                     </div>
                   </div>

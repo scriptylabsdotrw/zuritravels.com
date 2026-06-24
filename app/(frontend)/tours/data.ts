@@ -32,31 +32,28 @@ export type TourCollection = {
   tours: CollectionTour[];
 };
 
-/* Shared image pool — same photos as destinations, varied focal points */
-const u = (id: string, fpY = 0.5, fpX = 0.5, w = 1600) =>
-  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=85&crop=focalpoint&fp-x=${fpX}&fp-y=${fpY}`;
-
+/* Shared image pool — local images from /public/images */
 const IMG = {
-  gorillaA: u('photo-1535941339077-2dd1c7963098', 0.35),
-  gorillaB: u('photo-1535941339077-2dd1c7963098', 0.5, 0.55),
-  gorillaC: u('photo-1591824438708-ce405f36ba3d', 0.4),
-  gorillaD: u('photo-1591824438708-ce405f36ba3d', 0.6, 0.6),
-  savannaA: u('photo-1547970810-dc1eac37d174', 0.55),
-  savannaB: u('photo-1547970810-dc1eac37d174', 0.3, 0.4),
-  savannaC: u('photo-1547970810-dc1eac37d174', 0.65, 0.55),
-  elephantA: u('photo-1516426122078-c23e76319801', 0.45),
-  elephantB: u('photo-1516426122078-c23e76319801', 0.6, 0.7),
-  elephantC: u('photo-1516426122078-c23e76319801', 0.5, 0.3),
-  culturalA: u('photo-1523805009345-7448845a9e53', 0.4),
-  culturalB: u('photo-1523805009345-7448845a9e53', 0.65, 0.6),
-  culturalC: u('photo-1523805009345-7448845a9e53', 0.3, 0.55),
-  culturalD: u('photo-1523805009345-7448845a9e53', 0.55, 0.35),
-  coastA: u('photo-1589552416260-89fd1b39e9b8', 0.35),
-  coastB: u('photo-1589552416260-89fd1b39e9b8', 0.7, 0.4),
-  coastC: u('photo-1589552416260-89fd1b39e9b8', 0.5, 0.65),
-  coastD: u('photo-1589552416260-89fd1b39e9b8', 0.25),
-  guideA: u('photo-1504432842672-1a79f78e4084', 0.3),
-  guideB: u('photo-1504432842672-1a79f78e4084', 0.55, 0.55),
+  gorillaA:  '/images/2h-media-FKcRXTOHG8M-unsplash.jpg',
+  gorillaB:  '/images/simone-dinoia-x7Aizp5YZX0-unsplash.jpg',
+  gorillaC:  '/images/2h-media-PIU27R-xL04-unsplash.jpg',
+  gorillaD:  '/images/2h-media-FKcRXTOHG8M-unsplash.jpg',
+  savannaA:  '/images/34417507774_a20f845d51_b.jpg',
+  savannaB:  '/images/49454310978_773ab21f11_b.jpg',
+  savannaC:  '/images/49454780251_beb36dda2f_b.jpg',
+  elephantA: '/images/49454989927_e6a77a7cef_b.jpg',
+  elephantB: '/images/49454763506_8086d344a1_b.jpg',
+  elephantC: '/images/35095463862_799645aa4d_b.jpg',
+  culturalA: '/images/kelly-umuringa-4Ao1XfeaMWM-unsplash.jpg',
+  culturalB: '/images/kelly-umuringa-4Ao1XfeaMWM-unsplash.jpg',
+  culturalC: '/images/kelly-umuringa-4Ao1XfeaMWM-unsplash.jpg',
+  culturalD: '/images/kelly-umuringa-4Ao1XfeaMWM-unsplash.jpg',
+  coastA:    '/images/nyungwewaterfall.jpg',
+  coastB:    '/images/NYUNGWE.jpg',
+  coastC:    '/images/nyungwewaterfall.jpg',
+  coastD:    '/images/NYUNGWE.jpg',
+  guideA:    '/images/49454780251_beb36dda2f_b.jpg',
+  guideB:    '/images/2h-media-PIU27R-xL04-unsplash.jpg',
 };
 
 export const tourCollections: TourCollection[] = [

@@ -76,13 +76,13 @@ export type Tour = {
   bestTime: string;
   /** Tiers this tour can be designed in. Defaults to all when omitted. */
   tiers?: readonly Tier[];
-  /** What's included in the price. Falls back to default if omitted. */
+  /** What’s included in the price. Falls back to default if omitted. */
   includes?: TourPerk[];
-  /** What's NOT included. Falls back to default if omitted. */
+  /** What’s NOT included. Falls back to default if omitted. */
   excludes?: TourPerk[];
 };
 
-/** Resolve a tour's available tiers (defaulting to all three). */
+/** Resolve a tour’s available tiers (defaulting to all three). */
 export const tourTiers = (t: Tour): readonly Tier[] => t.tiers ?? TIERS;
 export const tourIncludes = (t: Tour): TourPerk[] => t.includes ?? defaultIncludes;
 export const tourExcludes = (t: Tour): TourPerk[] => t.excludes ?? defaultExcludes;
@@ -101,35 +101,31 @@ export type Destination = {
   tours: Tour[];
 };
 
-/* Shared image pool with focal-point variants — same base photos, different framing */
-const u = (id: string, fpY = 0.5, fpX = 0.5) =>
-  `https://images.unsplash.com/${id}?auto=format&fit=crop&w=1600&q=85&crop=focalpoint&fp-x=${fpX}&fp-y=${fpY}`;
-
+/* ── Local image pool ─────────────────────────────────────────────
+   All images served from /public/images — no external dependencies. */
 const IMG = {
-  // Gorilla pool
-  gorillaSilverback: u('photo-1535941339077-2dd1c7963098', 0.35),
-  gorillaFace: u('photo-1535941339077-2dd1c7963098', 0.5, 0.55),
-  gorillaForest: u('photo-1591824438708-ce405f36ba3d', 0.4),
-  gorillaCloseup: u('photo-1591824438708-ce405f36ba3d', 0.55, 0.6),
-  // Savanna / migration pool
-  serengetiPlains: u('photo-1547970810-dc1eac37d174', 0.55),
-  marsaiSavanna: u('photo-1547970810-dc1eac37d174', 0.3, 0.4),
-  // Elephants / big game pool
-  elephantHerd: u('photo-1516426122078-c23e76319801', 0.45),
-  elephantBush: u('photo-1516426122078-c23e76319801', 0.6, 0.7),
-  elephantWide: u('photo-1516426122078-c23e76319801', 0.5, 0.3),
-  // Cultural pool
-  culturalKigali: u('photo-1523805009345-7448845a9e53', 0.4),
-  culturalCommunity: u('photo-1523805009345-7448845a9e53', 0.65, 0.6),
-  culturalDetail: u('photo-1523805009345-7448845a9e53', 0.3, 0.55),
-  // Coast / water pool
-  coastDhow: u('photo-1589552416260-89fd1b39e9b8', 0.35),
-  coastWater: u('photo-1589552416260-89fd1b39e9b8', 0.7, 0.4),
-  coastBeach: u('photo-1589552416260-89fd1b39e9b8', 0.5, 0.65),
-  coastHorizon: u('photo-1589552416260-89fd1b39e9b8', 0.25),
-  // Guide / portrait pool
-  guidePortrait: u('photo-1504432842672-1a79f78e4084', 0.3),
-  guideLandscape: u('photo-1504432842672-1a79f78e4084', 0.55, 0.55),
+  // Gorillas / Volcanoes NP
+  gorillaSitting:        '/images/2h-media-FKcRXTOHG8M-unsplash.jpg',
+  gorillaWalking:        '/images/2h-media-PIU27R-xL04-unsplash.jpg',
+  gorillaPortrait:       '/images/simone-dinoia-x7Aizp5YZX0-unsplash.jpg',
+  intoreDancers:         '/images/kelly-umuringa-4Ao1XfeaMWM-unsplash.jpg',
+  // Akagera National Park
+  akageraSafariJeep:     '/images/34417507774_a20f845d51_b.jpg',
+  akageraElephantsAerial:'/images/35095463862_799645aa4d_b.jpg',
+  akageraRhinosLake:     '/images/49454310358_c82de1407b_b.jpg',
+  akageraRhinoPortrait:  '/images/49454296718_df51c929c1_b.jpg',
+  akageraLeopardBush:    '/images/49454756191_332c75f62b_b.jpg',
+  akageraLeopardStalk:   '/images/49454757681_11f814c9e7_b.jpg',
+  akageraLionCubs:       '/images/49454310618_2b2a38aefc_b.jpg',
+  akageraZebra:          '/images/49454310978_773ab21f11_b.jpg',
+  akageraElephantForest: '/images/49454989927_e6a77a7cef_b.jpg',
+  akageraElephantBush:   '/images/49454763506_8086d344a1_b.jpg',
+  akageraRhinoCalf:      '/images/49455004142_fb447ca46a_b.jpg',
+  akageraWetland:        '/images/49454986102_7cb485d628_b.jpg',
+  akageraPlains:         '/images/49454780251_beb36dda2f_b.jpg',
+  // Nyungwe National Park
+  nyungweBright:         '/images/nyungwewaterfall.jpg',
+  nyungweDark:           '/images/NYUNGWE.jpg',
 };
 
 export const destinations: Destination[] = [
@@ -140,8 +136,8 @@ export const destinations: Destination[] = [
     tagline: 'Land of a thousand hills.',
     region: 'East Africa',
     bestTime: 'Jun – Sep · Dec – Feb',
-    image: IMG.gorillaSilverback,
-    hero: IMG.gorillaSilverback.replace('w=1600', 'w=2400'),
+    image: IMG.gorillaPortrait,
+    hero: IMG.gorillaWalking,
     description:
       'A quietly elegant country of forested volcanoes, lakeside villages, and the world’s most considered conservation story. Home to mountain gorillas and a new African cosmopolitan capital.',
     highlights: [
@@ -159,7 +155,7 @@ export const destinations: Destination[] = [
         pace: 'Active',
         group: 'Private · max 8',
         category: 'Trekking',
-        image: IMG.gorillaSilverback,
+        image: IMG.gorillaSitting,
         summary: 'Two permitted treks into Volcanoes National Park, paired with Bisate Lodge.',
         description:
           'A short, privately permitted route to the silverback families of Volcanoes National Park. Forest treks, conservation researcher access, and the finest forest lodge in East Africa.',
@@ -177,18 +173,123 @@ export const destinations: Destination[] = [
         ],
       },
       {
+        slug: 'volcanoes-golden-monkey-trek',
+        title: 'Volcanoes Golden Monkey Trek',
+        duration: '2 days',
+        pace: 'Moderate',
+        group: 'Private · max 8',
+        category: 'Trekking',
+        image: IMG.gorillaWalking,
+        summary: 'Track habituated golden monkey groups in the bamboo forests below the Virunga volcanoes.',
+        description:
+          'Golden monkeys inhabit the bamboo zone of the Virunga volcanoes — a lower, less demanding trek than the gorillas, and one of the most photogenic wildlife encounters in Africa. Their iridescent gold-and-black colouring and acrobatic leaps through bamboo make every session extraordinary.',
+        highlights: ['Golden monkey habituation session', 'Virunga bamboo forest walk', 'Volcano views from the treeline', 'Musanze town exploration'],
+        bestTime: 'Jun – Sep · Dec – Feb',
+        includes: [
+          { icon: 'binoculars', label: 'Golden monkey trekking permit' },
+          { icon: 'guide', label: 'Private guide & forest tracker' },
+          { icon: 'transport', label: '4×4 vehicle & airport transfers' },
+          { icon: 'lodge', label: 'Lodge accommodation in Musanze' },
+          { icon: 'meals', label: 'All meals during the itinerary' },
+          { icon: 'drinks', label: 'Soft drinks & bottled water' },
+          { icon: 'permit', label: 'Volcanoes NP entry fees' },
+        ],
+      },
+      {
+        slug: 'akagera-big-five-safari',
+        title: 'Akagera Big Five Safari',
+        duration: '4 days',
+        pace: 'Moderate',
+        group: 'Private · max 6',
+        category: 'Wildlife',
+        image: IMG.akageraSafariJeep,
+        summary: 'Game drives in Rwanda’s only savanna park — black rhinos, lions, leopards, and a boat safari on Lake Ihema.',
+        description:
+          'Akagera is Rwanda’s only savanna park, anchored by a chain of lakes along the Congo–Nile ridge. Black and white rhinos were reintroduced here after two decades of absence, and lions followed. The result is an intimate Big Five park without the crowds of East Africa’s northern circuit — combined with boat safaris on Lake Ihema, one of the continent’s most productive hippo and bird waterways.',
+        highlights: ['Black rhino tracking on foot', 'Lion & leopard game drives', 'Lake Ihema boat safari', 'Hippo pools & fish-eagle morning'],
+        bestTime: 'Jun – Sep · Jan – Feb',
+        includes: [
+          { icon: 'guide', label: 'Private guide & game tracker' },
+          { icon: 'transport', label: '4×4 game-drive vehicle' },
+          { icon: 'lodge', label: 'Akagera Game Lodge (or tier equivalent)' },
+          { icon: 'meals', label: 'All meals during the itinerary' },
+          { icon: 'drinks', label: 'Soft drinks & bottled water' },
+          { icon: 'permit', label: 'Akagera NP fees & conservation levy' },
+          { icon: 'binoculars', label: 'Lake Ihema boat safari' },
+        ],
+      },
+      {
+        slug: 'nyungwe-canopy-and-chimps',
+        title: 'Nyungwe Canopy & Chimpanzees',
+        duration: '3 days',
+        pace: 'Active',
+        group: 'Private · max 6',
+        category: 'Trekking',
+        image: IMG.nyungweBright,
+        summary: 'Africa’s longest treetop canopy walk and habituated chimpanzee tracking in one of the continent’s oldest rainforests.',
+        description:
+          'Nyungwe is one of Africa’s oldest montane rainforests — a dense, dripping jungle in the south-west of Rwanda. Africa’s longest suspended canopy walk runs 200 metres above the forest floor. Below it, habituated chimpanzee families and Angola colobus monkeys in troops of 300 make every morning unpredictable.',
+        highlights: ['Habituated chimpanzee tracking', '600m suspended canopy walk', 'Angola colobus troop encounter', 'Isumo waterfall hike'],
+        bestTime: 'Jun – Sep · Dec – Jan',
+        includes: [
+          { icon: 'binoculars', label: 'Chimpanzee tracking permit' },
+          { icon: 'guide', label: 'Private guide & primate tracker' },
+          { icon: 'transport', label: '4×4 vehicle & transfers' },
+          { icon: 'lodge', label: 'Nyungwe Forest Lodge (or tier equivalent)' },
+          { icon: 'meals', label: 'All meals during the itinerary' },
+          { icon: 'drinks', label: 'Soft drinks & bottled water' },
+          { icon: 'permit', label: 'Nyungwe NP entry & canopy walk fee' },
+        ],
+      },
+      {
+        slug: 'nyanza-royal-heritage',
+        title: 'Nyanza Royal Heritage',
+        duration: '2 days',
+        pace: 'Easy',
+        group: 'Private',
+        category: 'Cultural',
+        image: IMG.intoreDancers,
+        summary: 'The King’s Palace Museum, royal Inyambo cattle, and traditional Intore ceremonies in Rwanda’s former royal capital.',
+        description:
+          'Nyanza was the seat of Rwanda’s royal court for centuries. The reconstructed King’s Palace Museum tells the story of the Mwami through architecture, cattle, and living craft — and the Rwesero Arts Museum nearby holds some of the finest contemporary Rwandan art. A half-day with the Intore dance troupe and an evening at a family-run inn round a journey that few visitors take.',
+        highlights: ['King’s Palace Museum & Inyambo royal cattle', 'Intore dance ceremony', 'Rwesero Arts Museum', 'Traditional storytelling evening'],
+        bestTime: 'Year-round',
+      },
+      {
         slug: 'kivu-and-nyungwe',
         title: 'Lake Kivu & Nyungwe Canopy',
         duration: '5 days',
         pace: 'Moderate',
         group: 'Private · max 6',
         category: 'Adventure',
-        image: IMG.coastWater,
+        image: IMG.nyungweDark,
         summary: 'Lakeside villages, Nyungwe rainforest canopy walks, and chimpanzee tracking.',
         description:
           'A slower, lower-altitude counterweight to the gorilla parks — coffee villages on Lake Kivu, the longest canopy walk in Africa, and a deep, quiet rainforest.',
         highlights: ['Lake Kivu private boat', 'Nyungwe canopy walk', 'Chimpanzee tracking', 'Coffee village stay'],
         bestTime: 'Jun – Aug · Dec – Jan',
+      },
+      {
+        slug: 'musanze-twin-lakes-and-volcanoes',
+        title: 'Musanze, Twin Lakes & Volcanoes',
+        duration: '3 days',
+        pace: 'Active',
+        group: 'Private · max 6',
+        category: 'Adventure',
+        image: IMG.gorillaSitting,
+        summary: 'Lake Burera and Ruhondo by boat, the Dian Fossey tomb trail, and an optional Bisoke crater summit.',
+        description:
+          'Based in Musanze — the gateway to the Virunga — this route explores the twin crater lakes of Burera and Ruhondo framed by volcanic peaks, the forest trail leading to Dian Fossey’s tomb and research cabin, and an optional full-day climb of Mount Bisoke to a stunning crater lake at 3,711m.',
+        highlights: ['Twin Lakes Burera & Ruhondo by boat', 'Dian Fossey tomb & research cabin trail', 'Bisoke crater summit (optional)', 'Musanze caves exploration'],
+        bestTime: 'Jun – Sep',
+        includes: [
+          { icon: 'guide', label: 'Private guide & mountain tracker' },
+          { icon: 'transport', label: '4×4 vehicle & transfers' },
+          { icon: 'lodge', label: 'Boutique lodge in Musanze' },
+          { icon: 'meals', label: 'All meals during the itinerary' },
+          { icon: 'drinks', label: 'Soft drinks & bottled water' },
+          { icon: 'permit', label: 'Bisoke climb permit (if taken)' },
+        ],
       },
       {
         slug: 'kigali-design-and-memory',
@@ -197,7 +298,7 @@ export const destinations: Destination[] = [
         pace: 'Easy',
         group: 'Private',
         category: 'Cultural',
-        image: IMG.culturalKigali,
+        image: IMG.intoreDancers,
         summary: 'A privately hosted city briefing — memorial, design studios, hosted dinners.',
         description:
           'An unhurried two days inside one of Africa’s most considered capitals — the memorial, Inema arts centre, hosted dinners with writers and curators, and a quiet morning at the markets.',
@@ -211,7 +312,7 @@ export const destinations: Destination[] = [
         pace: 'Active',
         group: 'Private · max 6',
         category: 'Wildlife',
-        image: IMG.gorillaForest,
+        image: IMG.akageraRhinosLake,
         summary: 'Gorillas, golden monkeys, chimpanzees, canopy walks — across three parks.',
         description:
           'A complete primate and forest route covering Volcanoes, Nyungwe, and Akagera. The deepest possible introduction to Rwanda’s wilderness in a single, privately designed week.',
@@ -238,8 +339,8 @@ export const destinations: Destination[] = [
     tagline: 'Endless plains, endless story.',
     region: 'East Africa',
     bestTime: 'Jun – Oct (Migration)',
-    image: IMG.serengetiPlains,
-    hero: IMG.serengetiPlains.replace('w=1600', 'w=2400'),
+    image: IMG.akageraSafariJeep,
+    hero: IMG.akageraElephantsAerial,
     description:
       'The Serengeti, Ngorongoro, and the wild islands of Zanzibar — Tanzania holds the largest land migration on Earth and a coastline of impossible quiet.',
     highlights: [
@@ -257,7 +358,7 @@ export const destinations: Destination[] = [
         pace: 'Moderate',
         group: 'Private · max 6',
         category: 'Wildlife',
-        image: IMG.serengetiPlains,
+        image: IMG.akageraSafariJeep,
         summary: 'A mobile migration camp following the herds across the Serengeti.',
         description:
           'Time-tuned camps moved weeks ahead based on rainfall and river crossing forecasts. The classic northern circuit, designed to put you in the right place at the right week.',
@@ -271,7 +372,7 @@ export const destinations: Destination[] = [
         pace: 'Easy',
         group: 'Private · max 8',
         category: 'Wildlife',
-        image: IMG.elephantHerd,
+        image: IMG.akageraElephantForest,
         summary: 'Crater game drives, baobab forests, and elephants in the Tarangire valley.',
         description:
           'A gentler, lower-altitude introduction to Tanzania’s safari country — Ngorongoro caldera at dawn and Tarangire’s old-growth baobabs with the largest elephant population in the north.',
@@ -285,7 +386,7 @@ export const destinations: Destination[] = [
         pace: 'Active',
         group: 'Private · max 6',
         category: 'Wildlife',
-        image: IMG.guideLandscape,
+        image: IMG.akageraPlains,
         summary: 'Southern Tanzania — wilder, quieter, almost no other vehicles.',
         description:
           'The wilder, quieter south. Boat safaris on the Rufiji, walking trails with armed rangers, and Ruaha’s extraordinary predator densities — without the northern crowds.',
@@ -299,7 +400,7 @@ export const destinations: Destination[] = [
         pace: 'Moderate',
         group: 'Private · max 4',
         category: 'Cultural',
-        image: IMG.culturalCommunity,
+        image: IMG.intoreDancers,
         summary: 'Quiet days with two of the last hunter-gatherer cultures in East Africa.',
         description:
           'A respectful, carefully hosted route to spend time with the Hadzabe and Datoga around Lake Eyasi. Mornings with hunters, evenings with blacksmiths, slow days in between.',
@@ -316,8 +417,8 @@ export const destinations: Destination[] = [
     tagline: 'Classic safari, reinterpreted.',
     region: 'East Africa',
     bestTime: 'Jul – Oct · Jan – Mar',
-    image: IMG.elephantHerd,
-    hero: IMG.elephantHerd.replace('w=1600', 'w=2400'),
+    image: IMG.akageraLeopardBush,
+    hero: IMG.akageraLeopardStalk,
     description:
       'The original safari country — Maasai Mara, Laikipia, Samburu, and Lamu — held now by a new generation of owner-led conservancies that put wildlife and community first.',
     highlights: [
@@ -335,7 +436,7 @@ export const destinations: Destination[] = [
         pace: 'Moderate',
         group: 'Private · max 6',
         category: 'Wildlife',
-        image: IMG.marsaiSavanna,
+        image: IMG.akageraPlains,
         summary: 'Private conservancies bordering the Mara — quieter, with night drives.',
         description:
           'The Mara without the convoy. Private conservancies allow night drives, walking safaris, and off-road tracking — and put a meaningful share of every booking into local community trusts.',
@@ -349,7 +450,7 @@ export const destinations: Destination[] = [
         pace: 'Active',
         group: 'Private · max 6',
         category: 'Wildlife',
-        image: IMG.elephantBush,
+        image: IMG.akageraRhinoPortrait,
         summary: 'Rewilded private estates with rhinos, wild dogs, and horseback safaris.',
         description:
           'A new generation of privately owned Laikipia estates have been quietly rewilded — black and white rhinos, wild dog packs, and horseback safaris through Mount Kenya foothills.',
@@ -363,7 +464,7 @@ export const destinations: Destination[] = [
         pace: 'Moderate',
         group: 'Private · max 6',
         category: 'Cultural',
-        image: IMG.culturalDetail,
+        image: IMG.intoreDancers,
         summary: 'Northern frontier wildlife with deep Samburu cultural immersion.',
         description:
           'A short journey into Kenya’s northern frontier — Samburu and Buffalo Springs reserves, with hosted time alongside the elegant Samburu people, who consider themselves cousins to the Maasai.',
@@ -377,7 +478,7 @@ export const destinations: Destination[] = [
         pace: 'Easy',
         group: 'Private',
         category: 'Coast',
-        image: IMG.coastDhow,
+        image: IMG.intoreDancers,
         summary: 'Dhow sails, Swahili interiors, and the quietest beach you will find on the coast.',
         description:
           'A slow, intentional ending — dhow charters between Lamu and Manda, Stone Town walks, Swahili interiors, and a private chef who cooks where you swim.',
@@ -394,8 +495,8 @@ export const destinations: Destination[] = [
     tagline: 'The pearl of Africa.',
     region: 'East Africa',
     bestTime: 'Jun – Aug · Dec – Feb',
-    image: IMG.gorillaForest,
-    hero: IMG.gorillaForest.replace('w=1600', 'w=2400'),
+    image: IMG.gorillaSitting,
+    hero: IMG.gorillaWalking,
     description:
       'Wilder, greener, and far quieter than its neighbours. Bwindi’s gorillas, Queen Elizabeth’s tree-climbing lions, and the source of the Nile.',
     highlights: [
@@ -413,7 +514,7 @@ export const destinations: Destination[] = [
         pace: 'Active',
         group: 'Private · max 8',
         category: 'Trekking',
-        image: IMG.gorillaCloseup,
+        image: IMG.gorillaPortrait,
         summary: 'Two gorilla treks in Bwindi Impenetrable Forest with Clouds Lodge.',
         description:
           'A different forest, a different feeling — Bwindi’s gorillas live in denser, steeper jungle than their Rwandan cousins. A more challenging trek with a deeper, quieter reward.',
@@ -436,7 +537,7 @@ export const destinations: Destination[] = [
         pace: 'Moderate',
         group: 'Private · max 6',
         category: 'Wildlife',
-        image: IMG.elephantWide,
+        image: IMG.akageraLionCubs,
         summary: 'Tree-climbing lions, Kazinga Channel boat safaris, and Ishasha plains.',
         description:
           'Queen Elizabeth National Park is one of the rare places where lions habitually climb trees. Boat safaris on the Kazinga Channel, big game on the Ishasha plains, and quiet lodge time.',
@@ -450,7 +551,7 @@ export const destinations: Destination[] = [
         pace: 'Moderate',
         group: 'Private · max 6',
         category: 'Trekking',
-        image: IMG.gorillaFace,
+        image: IMG.gorillaSitting,
         summary: 'Habituated chimp tracking in the densest primate forest in East Africa.',
         description:
           'Kibale holds the highest concentration of primates of any forest in East Africa. A chimp habituation experience puts you with the same family for half a day — the deepest possible primate encounter, short of gorillas.',
@@ -473,7 +574,7 @@ export const destinations: Destination[] = [
         pace: 'Moderate',
         group: 'Private · max 6',
         category: 'Adventure',
-        image: IMG.coastWater,
+        image: IMG.akageraWetland,
         summary: 'The Nile compressed through a 7-metre gap — and big game on either bank.',
         description:
           'A boat safari to the foot of Murchison Falls, where the Nile is forced through a seven-metre gap. Wildlife drives on both banks, and a quiet riverside camp.',
@@ -490,8 +591,8 @@ export const destinations: Destination[] = [
     tagline: 'The Okavango wilderness.',
     region: 'Southern Africa',
     bestTime: 'May – Oct',
-    image: IMG.elephantHerd,
-    hero: IMG.elephantHerd.replace('w=1600', 'w=2400'),
+    image: IMG.akageraElephantsAerial,
+    hero: IMG.akageraElephantBush,
     description:
       'A delta the size of a country, water in the desert, and the highest concentration of premium camps anywhere in Africa. Low-density, high-impact.',
     highlights: [
@@ -509,7 +610,7 @@ export const destinations: Destination[] = [
         pace: 'Easy',
         group: 'Private · max 4',
         category: 'Wildlife',
-        image: IMG.coastBeach,
+        image: IMG.akageraWetland,
         summary: 'Silent mokoro canoe safaris through the heart of the Delta.',
         description:
           'A water-led safari in the world’s only inland delta. Mokoro canoes, walking safaris, and a private island camp deep inside the permanent water.',
@@ -523,7 +624,7 @@ export const destinations: Destination[] = [
         pace: 'Moderate',
         group: 'Private · max 6',
         category: 'Wildlife',
-        image: IMG.elephantBush,
+        image: IMG.akageraLeopardStalk,
         summary: 'Africa’s most extraordinary predator densities in the dry season.',
         description:
           'In the Linyanti dry season, water becomes the story. Wild dog packs, lion prides, and Africa’s largest elephant herds funnel through one of the continent’s most concentrated wildlife regions.',
@@ -537,7 +638,7 @@ export const destinations: Destination[] = [
         pace: 'Easy',
         group: 'Private · max 6',
         category: 'Adventure',
-        image: IMG.guideLandscape,
+        image: IMG.akageraPlains,
         summary: 'Quad bikes, meerkats, and the most cinematic landscape in southern Africa.',
         description:
           'Vast, otherworldly salt pans — sleep out under the stars, ride quad bikes across the white, and meet habituated meerkat families at dawn.',
@@ -551,7 +652,7 @@ export const destinations: Destination[] = [
         pace: 'Moderate',
         group: 'Private · max 6',
         category: 'Cultural',
-        image: IMG.culturalCommunity,
+        image: IMG.intoreDancers,
         summary: 'Walking the Kalahari with one of the world’s oldest peoples.',
         description:
           'A respectfully hosted route alongside San communities — bush walks, traditional knowledge, fire-side stories, and quiet days in one of the most beautiful deserts on Earth.',
@@ -568,8 +669,8 @@ export const destinations: Destination[] = [
     tagline: 'Spice islands of the Swahili coast.',
     region: 'Indian Ocean',
     bestTime: 'Jun – Oct · Dec – Feb',
-    image: IMG.coastDhow,
-    hero: IMG.coastDhow.replace('w=1600', 'w=2400'),
+    image: IMG.intoreDancers,
+    hero: IMG.intoreDancers,
     description:
       'Where dhow sails meet Stone Town and reef. A quiet, fragrant ending to almost every East African journey we design.',
     highlights: [
@@ -587,7 +688,7 @@ export const destinations: Destination[] = [
         pace: 'Easy',
         group: 'Private',
         category: 'Cultural',
-        image: IMG.culturalKigali,
+        image: IMG.intoreDancers,
         summary: 'A privately guided architecture and history walk through Stone Town.',
         description:
           'A slow, hosted three days inside Stone Town — architecture, slave-trade memorial, spice plantations, slow Swahili cooking, and music nights with local musicians.',
@@ -601,7 +702,7 @@ export const destinations: Destination[] = [
         pace: 'Easy',
         group: 'Private',
         category: 'Coast',
-        image: IMG.coastBeach,
+        image: IMG.nyungweBright,
         summary: 'Twelve bandas, one private island, almost no schedule.',
         description:
           'Mnemba is a single private island with twelve thatched bandas, no roads, and no Wi-Fi where it would interrupt the view. Reef snorkelling, rest, and the kind of silence you forgot existed.',
@@ -615,7 +716,7 @@ export const destinations: Destination[] = [
         pace: 'Easy',
         group: 'Private',
         category: 'Coast',
-        image: IMG.coastHorizon,
+        image: IMG.nyungweDark,
         summary: 'The lesser-known sister island — the best diving in East Africa.',
         description:
           'Pemba is greener, quieter, and far less visited than Unguja — and holds the best reef diving on the East African coast. A short stay at the only luxury lodge on the island.',
@@ -629,7 +730,7 @@ export const destinations: Destination[] = [
         pace: 'Easy',
         group: 'Private',
         category: 'Adventure',
-        image: IMG.coastDhow,
+        image: IMG.intoreDancers,
         summary: 'A traditional dhow charter along the spice coast, ending at Mafia Island.',
         description:
           'A private dhow charter along the southern Tanzanian coast — old fishing villages, mangrove channels, beach picnics, and a final stay on Mafia Island.',

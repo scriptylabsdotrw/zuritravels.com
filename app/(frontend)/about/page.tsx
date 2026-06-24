@@ -1,9 +1,12 @@
 import {
+  getAbout,
   getMilestones,
   getPartners,
   getPressFeatures,
   getPrinciples,
+  getSections,
   getSiteContent,
+  getTestimonials,
 } from '@/lib/data';
 import AboutView from './_view';
 
@@ -18,15 +21,27 @@ export const metadata = {
 };
 
 export default async function AboutPage() {
-  const [siteContent, principles, milestones, partners, pressFeatures] = await Promise.all([
-    getSiteContent(),
-    getPrinciples('about'),
-    getMilestones(),
-    getPartners(),
-    getPressFeatures(),
-  ]);
+  const [about, sections, testimonials, siteContent, principles, milestones, partners, pressFeatures] =
+    await Promise.all([
+      getAbout(),
+      getSections(),
+      getTestimonials(),
+      getSiteContent(),
+      getPrinciples('about'),
+      getMilestones(),
+      getPartners(),
+      getPressFeatures(),
+    ]);
+
+  const voiceItems = testimonials.length
+    ? testimonials.map((t) => ({ name: t.attribution, role: t.context, quote: t.quote }))
+    : sections.voices.items;
+  const voices = { ...sections.voices, items: voiceItems };
+
   return (
     <AboutView
+      about={about}
+      voices={voices}
       siteContent={siteContent}
       principles={principles}
       milestones={milestones}

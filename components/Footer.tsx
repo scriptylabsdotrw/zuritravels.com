@@ -1,19 +1,13 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import type { FooterContent, SocialPlatform } from '@/lib/types';
 
-const HANDLE = 'zuritravels';
+type FooterProps = {
+  footer: FooterContent;
+  contact: { phone: string; email: string; address: string };
+};
 
-const socials = [
-  { label: 'Instagram', href: `https://instagram.com/${HANDLE}` },
-  { label: 'Facebook', href: `https://facebook.com/${HANDLE}` },
-  { label: 'YouTube', href: `https://youtube.com/@${HANDLE}` },
-  { label: 'TikTok', href: `https://tiktok.com/@${HANDLE}` },
-  { label: 'X', href: `https://x.com/${HANDLE}` },
-] as const;
-
-type SocialName = (typeof socials)[number]['label'];
-
-function SocialIcon({ name, className = '' }: { name: SocialName; className?: string }) {
+function SocialIcon({ name, className = '' }: { name: SocialPlatform; className?: string }) {
   switch (name) {
     case 'Instagram':
       return (
@@ -85,40 +79,8 @@ function SocialIcon({ name, className = '' }: { name: SocialName; className?: st
   }
 }
 
-const groups = [
-  {
-    title: 'Tours',
-    links: [
-      { label: 'Honeymoon', href: '/tours/honeymoon' },
-      { label: 'Active', href: '/tours/active' },
-      { label: 'History', href: '/tours/history' },
-      { label: 'Schools', href: '/tours/schools' },
-      { label: 'Corporate', href: '/tours/corporate' },
-    ],
-  },
-  {
-    title: 'Destinations',
-    links: [
-      { label: 'Rwanda', href: '/destinations/rwanda' },
-      { label: 'Tanzania', href: '/destinations/tanzania' },
-      { label: 'Kenya', href: '/destinations/kenya' },
-      { label: 'Uganda', href: '/destinations/uganda' },
-      { label: 'Botswana', href: '/destinations/botswana' },
-      { label: 'Zanzibar', href: '/destinations/zanzibar' },
-    ],
-  },
-  {
-    title: 'Studio',
-    links: [
-      { label: 'About', href: '/#about' },
-      { label: 'Journal', href: '/#journal' },
-      { label: 'Press', href: '/#press' },
-      { label: 'Contact', href: '/contact' },
-    ],
-  },
-];
-
-export default function Footer() {
+export default function Footer({ footer, contact }: FooterProps) {
+  const telHref = `tel:${contact.phone.replace(/\s/g, '')}`;
   return (
     <footer className="relative isolate overflow-hidden bg-[#0c0c0c] text-white">
       <div className="absolute -left-40 top-10 -z-10 h-[28rem] w-[28rem] rounded-full bg-[#7C8A3F]/15 blur-[120px]" aria-hidden />
@@ -133,45 +95,48 @@ export default function Footer() {
               className="h-12 w-auto max-w-full object-contain brightness-0 invert lg:h-14"
             />
           </Link>
-          <p className="max-w-md text-base leading-8 text-white/70">
-            Privately designed safaris, gorilla encounters, cultural journeys, and coastal escapes —
-            crafted in Africa, for travellers who measure a trip in stories, not stops.
-          </p>
+          <p className="max-w-md text-base leading-8 text-white/70">{footer.blurb}</p>
           <div className="space-y-2 text-sm leading-7 text-white/65">
-            <p>KG 7 Avenue, Kigali — Rwanda</p>
+            {contact.address && <p>{contact.address}</p>}
             <p>
-              <a href="tel:+250783140000" className="transition hover:text-white">
-                +250 783 140 000
-              </a>{' '}
-              ·{' '}
-              <a href="mailto:info@zuritravels.com" className="transition hover:text-white">
-                info@zuritravels.com
-              </a>
-            </p>
-          </div>
-          <div className="pt-2">
-            <p className="text-[0.6rem] font-medium uppercase tracking-[0.4em] text-white/45">
-              Follow · @{HANDLE}
-            </p>
-            <div className="mt-4 flex gap-3">
-              {socials.map((s) => (
-                <a
-                  key={s.label}
-                  href={s.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`Zuri Travels on ${s.label}`}
-                  className="group inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white/70 transition hover:border-[#7C8A3F] hover:bg-[#7C8A3F] hover:text-white"
-                >
-                  <SocialIcon name={s.label} className="h-[18px] w-[18px]" />
+              {contact.phone && (
+                <a href={telHref} className="transition hover:text-white">
+                  {contact.phone}
                 </a>
-              ))}
-            </div>
+              )}
+              {contact.phone && contact.email && <> · </>}
+              {contact.email && (
+                <a href={`mailto:${contact.email}`} className="transition hover:text-white">
+                  {contact.email}
+                </a>
+              )}
+            </p>
           </div>
+          {footer.socials.length > 0 && (
+            <div className="pt-2">
+              <p className="text-[0.6rem] font-medium uppercase tracking-[0.4em] text-white/45">
+                Follow · @{footer.socialHandle}
+              </p>
+              <div className="mt-4 flex gap-3">
+                {footer.socials.map((s) => (
+                  <a
+                    key={s.platform}
+                    href={s.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Zuri Travels on ${s.platform}`}
+                    className="group inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 text-white/70 transition hover:border-[#7C8A3F] hover:bg-[#7C8A3F] hover:text-white"
+                  >
+                    <SocialIcon name={s.platform} className="h-[18px] w-[18px]" />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="grid gap-12 sm:grid-cols-3">
-          {groups.map((group) => (
+          {footer.navGroups.map((group) => (
             <div key={group.title} className="space-y-5">
               <p className="text-[0.7rem] font-semibold uppercase tracking-[0.4em] text-[#7C8A3F]">
                 {group.title}
@@ -192,8 +157,8 @@ export default function Footer() {
 
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-[1280px] flex-col items-start gap-3 px-6 py-7 text-[0.72rem] uppercase tracking-[0.32em] text-white/55 sm:flex-row sm:items-center sm:justify-between lg:px-10">
-          <p>© {new Date().getFullYear()} Zuri Travels · All rights reserved.</p>
-          <p>Crafted in Kigali. Designed for the world.</p>
+          <p>© {new Date().getFullYear()} {footer.copyright}</p>
+          <p>{footer.tagline}</p>
         </div>
       </div>
     </footer>

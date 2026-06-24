@@ -103,6 +103,27 @@ export const SiteContent: GlobalConfig = {
             },
           ],
         },
+        {
+          label: 'Integrations & extras',
+          description: 'Floating WhatsApp button and the home booking-status ribbon.',
+          fields: [
+            {
+              name: 'whatsappNumber',
+              type: 'text',
+              admin: { description: 'Digits only, country code first — e.g. 250783140000.' },
+            },
+            {
+              name: 'whatsappMessage',
+              type: 'textarea',
+              admin: { description: 'Pre-filled message when someone opens the WhatsApp chat.' },
+            },
+            {
+              name: 'bookingStatus',
+              type: 'text',
+              admin: { description: 'Home hero ribbon, e.g. “Now booking · Seasons 2026 / 2027”.' },
+            },
+          ],
+        },
       ],
     },
   ],

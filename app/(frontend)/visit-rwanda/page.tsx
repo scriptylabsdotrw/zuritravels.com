@@ -2,6 +2,7 @@ import {
   getDestination,
   getFeaturedTestimonial,
   getSiteContent,
+  getVisitRwanda,
 } from '@/lib/data';
 import VisitRwandaView from './_view';
 
@@ -14,7 +15,8 @@ export const metadata = {
 };
 
 export default async function VisitRwandaPage() {
-  const [rwanda, siteContent, featuredTestimonial] = await Promise.all([
+  const [content, rwanda, siteContent, featuredTestimonial] = await Promise.all([
+    getVisitRwanda(),
     getDestination('rwanda'),
     getSiteContent(),
     getFeaturedTestimonial(),
@@ -22,6 +24,7 @@ export default async function VisitRwandaPage() {
   const tours = rwanda?.tours ?? [];
   return (
     <VisitRwandaView
+      content={content}
       tours={tours}
       siteContent={siteContent}
       featuredTestimonial={featuredTestimonial}
