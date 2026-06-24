@@ -60,3 +60,7 @@ public/logos/*.docx
 public/logos/*.txt
 
 .vercel
+
+# Claude Code local config (never commit)
+.claude/
+CLAUDE.md
