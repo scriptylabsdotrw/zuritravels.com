@@ -30,7 +30,6 @@ export const DEFAULT_HEADER: HeaderContent = {
     { label: 'Destinations', href: '/destinations', isMega: false },
     { label: 'Visit Rwanda', href: '/visit-rwanda', isMega: false },
     { label: 'Journal', href: '/journal', isMega: false },
-    { label: 'Contact', href: '/contact', isMega: false },
   ],
   megaFeatured: [
     {
@@ -105,7 +104,6 @@ export const DEFAULT_FOOTER: FooterContent = {
         { label: 'About', href: '/#about' },
         { label: 'Journal', href: '/#journal' },
         { label: 'Press', href: '/#press' },
-        { label: 'Contact', href: '/contact' },
       ],
     },
   ],

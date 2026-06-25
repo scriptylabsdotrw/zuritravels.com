@@ -3,6 +3,7 @@ import { fileURLToPath } from 'url';
 import { postgresAdapter } from '@payloadcms/db-postgres';
 import { vercelPostgresAdapter } from '@payloadcms/db-vercel-postgres';
 import { lexicalEditor } from '@payloadcms/richtext-lexical';
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer';
 import { buildConfig } from 'payload';
 import sharp from 'sharp';
 
@@ -78,6 +79,26 @@ export default buildConfig({
     JournalPageGlobal,
   ],
   editor: lexicalEditor(),
+  /* Transactional email over SMTP. Configured only when credentials are
+     present so local/dev without SMTP still boots (Payload falls back to a
+     console mock transport when `email` is undefined). */
+  email: process.env.SMTP_HOST
+    ? nodemailerAdapter({
+        defaultFromName: process.env.SMTP_FROM_NAME || 'Zuri Travels',
+        defaultFromAddress:
+          process.env.SMTP_FROM_EMAIL || process.env.SMTP_USER || '',
+        transportOptions: {
+          host: process.env.SMTP_HOST,
+          port: Number(process.env.SMTP_PORT) || 587,
+          // 587 uses STARTTLS, so the initial connection is not implicitly TLS.
+          secure: Number(process.env.SMTP_PORT) === 465,
+          auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS,
+          },
+        },
+      })
+    : undefined,
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
     outputFile: path.resolve(dirname, 'src/payload-types.ts'),

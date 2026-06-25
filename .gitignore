@@ -64,3 +64,6 @@ public/logos/*.txt
 # Claude Code local config (never commit)
 .claude/
 CLAUDE.md
+
+# Test artifacts
+cookies.txt
